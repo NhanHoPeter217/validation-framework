@@ -1,0 +1,1 @@
+e.log(greet('World'));

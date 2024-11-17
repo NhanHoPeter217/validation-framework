@@ -1,0 +1,16 @@
+# Dependency folders
+node_modules/
+
+# Build output
+dist/
+
+# Local development files
+.env
+.vscode/
+.idea/
+.yalc/
+yalc.lock
+
+# OS-specific files
+.DS_Store
+Thumbs.db
