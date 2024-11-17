@@ -7,7 +7,7 @@
   "scripts": {
     "postinstall": "npm run install-yalc && npm run add-framework-locally",
     "install-yalc": "npm install -g yalc || echo 'Please install yalc globally using: npm install -g yalc'",
-    "add-framework-locally": "npm run publish-locally && yalc add validation-framework",
+    "add-framework-locally": "npm run build && npm run publish-locally && yalc add validation-framework",
     "build": "rollup -c",
     "publish-locally": "yalc publish",
     "update-framework-locally": "yalc update validation-framework",
