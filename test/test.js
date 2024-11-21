@@ -1,1 +1,3 @@
-import { greet } from 'validation-framework'; // Run and you will see it updates
+import { validateEmail } from "validation-framework";
+
+console.log(validateEmail("hello@gmail.com")); // true

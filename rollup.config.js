@@ -1,10 +1,10 @@
-import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
+import typescript from '@rollup/plugin-typescript';
 
 export default {
-  input: 'src/index.js', // Your entry file
+  input: 'src/index.ts', // Your entry file
   output: [
     {
       file: 'dist/bundle.cjs', // Output for CommonJS
@@ -21,9 +21,8 @@ export default {
     resolve(), // Resolves `node_modules`
     commonjs(), // Converts CommonJS modules to ES modules
     json(), // Supports importing JSON files
-    babel({
-      babelHelpers: 'bundled', // Use Babel helpers directly in the bundle
-      exclude: 'node_modules/**', // Exclude dependencies from being transpiled
+    typescript({ // Add Rollup's TypeScript plugin
+      tsconfig: './tsconfig.json', // Specify your TypeScript configuration file
     }),
   ],
 };
