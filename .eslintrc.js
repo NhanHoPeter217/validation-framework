@@ -29,7 +29,7 @@ import { fileURLToPath } from 'url';
 // Resolve directory name for ES Modules
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export default tseslint.config(eslint.configs.recommended, tseslint.configs.recommendedTypeChecked, {
+export default tseslint.config(eslint.configs.recommended, tseslint.configs.strictTypeChecked, {
   languageOptions: {
     parserOptions: {
       projectService: true,
@@ -37,6 +37,24 @@ export default tseslint.config(eslint.configs.recommended, tseslint.configs.reco
     }
   },
   rules: {
-    '@typescript-eslint/no-explicit-any': 'off'
+    'prettier/prettier': 'warn',
+    'react/react-in-jsx-scope': 'off',
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
+    'no-unused-vars': 'off',
+    'simple-import-sort/imports': 'warn',
+    'simple-import-sort/exports': 'warn',
+    '@typescript-eslint/no-explicit-any': 'warn',
+    'react-hooks/rules-of-hooks': 'warn',
+    'react-hooks/exhaustive-deps': 'warn',
+    'unused-imports/no-unused-imports': 'warn',
+    'unused-imports/no-unused-vars': [
+      'warn',
+      {
+        vars: 'all',
+        varsIgnorePattern: '^_',
+        args: 'after-used',
+        argsIgnorePattern: '^_'
+      }
+    ]
   }
 });
