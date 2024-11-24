@@ -21,11 +21,23 @@ export class NumberSchema extends Schema {
   min(min: number, message?: Message) {
     return this.addTest({
       name: 'min',
-      message: message || `The value must be greater than ${min}`,
+      message: message || `The value must be >= ${min}`,
       exclusive: true,
       params: {},
       test: (value) => {
-        return min < value;
+        return min <= value;
+      }
+    });
+  }
+
+  max(max: number, message?: Message) {
+    return this.addTest({
+      name: 'max',
+      message: message || `The value must be <= ${max}`,
+      exclusive: true,
+      params: {},
+      test: (value) => {
+        return value <= max;
       }
     });
   }

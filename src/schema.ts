@@ -12,7 +12,7 @@ export abstract class Schema {
    */
   protected tests: Test[] = [];
 
-  protected exclusiveTests: Record<string, null | Test> = {};
+  protected exclusiveTests: Record<string, boolean> = {};
 
   /**
    * Store the tests of the base Schema (all internal tests are exclusive)
@@ -85,35 +85,36 @@ export abstract class Schema {
     return this.nullability(false, message);
   }
 
+  required(): this {
+    return this.nonNullable().defined();
+  }
+  nonRequired(): this {
+    return this.optional().nullable();
+  }
+
   // Add a test to the `tests` array
   addTest(opts: Test): this {
-    // let opts: TestConfig;
-
-    // if (opts.message === undefined) opts.message = 'Default Error';
+    if (opts.message === undefined) opts.message = 'Default Error';
 
     if (typeof opts.test !== 'function') throw new TypeError('`test` is a required parameters');
 
     const next = this.clone();
 
-    // let isExclusive =
-    //   opts.exclusive || (opts.name && next.exclusiveTests[opts.name] === true);
+    const isExclusive = opts.exclusive || (opts.name && next.exclusiveTests[opts.name] === true);
 
-    // if (opts.exclusive) {
-    //   if (!opts.name)
-    //     throw new TypeError(
-    //       'Exclusive tests must provide a unique `name` identifying the test',
-    //     );
-    // }
+    if (opts.exclusive) {
+      if (!opts.name) throw new TypeError('Exclusive tests must provide a unique `name` identifying the test');
+    }
 
-    // if (opts.name) next.exclusiveTests[opts.name] = !!opts.exclusive;
+    if (opts.name) next.exclusiveTests[opts.name] = !!opts.exclusive;
 
-    // next.tests = next.tests.filter((fn) => {
-    //   if (fn.name === opts.name) {
-    //     if (isExclusive) return false;
-    //     if (fn.test === test) return false;
-    //   }
-    //   return true;
-    // });
+    next.tests = next.tests.filter((fn) => {
+      if (fn.name === opts.name) {
+        if (isExclusive) return false;
+        if (fn.test === test) return false;
+      }
+      return true;
+    });
 
     next.tests.push(opts);
 
@@ -134,18 +135,19 @@ export abstract class Schema {
     this.errors = [];
     for (const test of Object.values(this.internalTests)) {
       if (!test.test(value)) {
-        return [test.message];
+        this.errors.push(test.message);
       }
     }
 
     if (!this.isType(value)) {
       this.errors.push(`The value must be of type ${this.type}`);
-      return this.errors;
     }
+
+    if (value == null) return this.errors;
 
     for (const test of this.tests) {
       if (!test.test(value)) {
-        return [test.message];
+        this.errors.push(test.message);
       }
     }
 
