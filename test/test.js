@@ -1,3 +1,7 @@
-import { validateEmail } from "validation-framework";
+import { NumberSchema } from 'validation-framework';
 
-console.log(validateEmail("hello@gmail.com")); // true
+let numberSchema = new NumberSchema().min(5).nullable().optional();
+
+console.log(numberSchema.safeValidate(6)); // false
+console.log(numberSchema.safeValidate(null)); // true
+console.log(numberSchema.safeValidate(undefined)); // true
