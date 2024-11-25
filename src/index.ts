@@ -1,4 +1,4 @@
-export function validateEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
+import { NumberSchema } from './number';
+import { Schema } from './schema';
+
+export { Schema, NumberSchema };
