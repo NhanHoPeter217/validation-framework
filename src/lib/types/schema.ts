@@ -1,12 +1,12 @@
-import { InternalTest, Test } from './createValidation';
-import { Message, ValidationError } from './ValidationError';
+import { InternalTest, Test } from '../others/createValidation';
+import { Message, ValidationError } from '../errors/ValidationError';
 
 export type SchemaSpec = {
   nullable: boolean;
   optional: boolean;
 };
 
-export abstract class Schema {
+export abstract class Schema<T> {
   /**
    * Store the tests of child Schemas or user-defined tests
    */

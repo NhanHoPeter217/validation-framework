@@ -1,118 +1,175 @@
-import { BaseSchema } from './base';
-import { ErrorMessage } from './error';
+import { Schema } from './schema';
+import { Maybe } from '../others';
+import { Message } from '../errors/ValidationError';
 
-class NumberSchema extends BaseSchema<number, ErrorMessage> {
-  private value: number = 0;
-  errors: ErrorMessage[] = [];
+const isNaN = (value: Maybe<number>) => value != +value;
 
+enum NumberFunctionEnum {
+  ZERO = 'zero',
+  POSITIVE = 'positive',
+  NONPOSITIVE = 'nonpositive',
+  NEGATIVE = 'negative',
+  NONNEGATIVE = 'nonnegative',
+  ODD = 'odd',
+  EVEN = 'even',
+  FINITE = 'finite',
+  GT = 'gt',
+  GTE = 'gte',
+  LT = 'lt',
+  LTE = 'lte',
+  INT = 'int',
+  MULTIPLYOF = 'multiplyOf'
+}
+
+class NumberSchema<T extends number> extends Schema<T> {
   constructor() {
-    super((value: unknown) => {
-      if (typeof value !== 'number') {
-        this.errors.push('Value should be a number');
-        throw new Error('Value should be a number');
+    super({
+      type: 'number',
+      check: (value) => {
+        return typeof value === 'number' && !isNaN(value);
       }
-      return value as number;
+    });
+  }
+  errors = [];
+
+  zero(message: Message = 'Value should be 0'): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.ZERO,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => value === 0
     });
   }
 
-  zero(message: ErrorMessage = 'Value should be 0'): NumberSchema {
-    // return this.refine(() => {
-    if (this.value !== 0) {
-      this.errors.push(message);
-      //   throw new Error(message);
-    }
-    return this;
-    // });
+  positive(message: Message = 'Value should be positive'): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.POSITIVE,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => value > 0
+    });
   }
 
-  positive(message: ErrorMessage = 'Value should be positive'): NumberSchema {
-    if (this.value < 0) {
-      this.errors.push(message);
-    }
-    return this;
+  nonpositive(message: Message = 'Value should be non-positive'): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.NONPOSITIVE,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => value <= 0
+    });
   }
 
-  nonpositive(message: ErrorMessage = 'Value should be non positive'): NumberSchema {
-    if (this.value >= 0) {
-      this.errors.push(message);
-    }
-    return this;
+  negative(message: Message = 'Value should be negative'): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.NEGATIVE,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => value < 0
+    });
   }
 
-  negative(message: ErrorMessage = 'Value should be negative'): NumberSchema {
-    if (this.value > 0) {
-      this.errors.push(message);
-    }
-    return this;
+  nonnegative(message: Message = 'Value should be non-negative'): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.NONNEGATIVE,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => value >= 0
+    });
   }
 
-  nonnegative(message: ErrorMessage = 'Value should be non negative'): NumberSchema {
-    if (this.value <= 0) {
-      this.errors.push(message);
-    }
-    return this;
+  odd(message: Message = 'Value should be odd'): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.ODD,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => value % 2 !== 0
+    });
   }
 
-  odd(message: ErrorMessage = 'Value should be odd'): NumberSchema {
-    if (this.value % 2 === 1) {
-      this.errors.push(message);
-    }
-    return this;
+  even(message: Message = 'Value should be even'): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.EVEN,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => value % 2 === 0
+    });
   }
 
-  even(message: ErrorMessage = 'Value should be even'): NumberSchema {
-    if (this.value % 2 !== 1) {
-      this.errors.push(message);
-    }
-    return this;
+  finite(message: Message = 'Value should be finite'): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.FINITE,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => isFinite(value)
+    });
   }
 
-  finite(message: ErrorMessage = 'Value should be finite'): NumberSchema {
-    if (!isFinite(this.value)) {
-      this.errors.push(message);
-    }
-    return this;
-  }
-  gt(value: number, message: ErrorMessage = `Value should be greater than ${value}`): NumberSchema {
-    if (this.value <= value) {
-      this.errors.push(message);
-    }
-    return this;
+  gt(value: number, message: Message = `Value should be greater than ${value}`): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.GT,
+      message: message,
+      exclusive: true,
+      params: { value },
+      test: (val) => val > value
+    });
   }
 
-  gte(value: number, message: ErrorMessage = `Value should be greater than or equal to ${value}`): NumberSchema {
-    if (this.value < value) {
-      this.errors.push(message);
-    }
-    return this;
+  gte(value: number, message: Message = `Value should be greater than or equal to ${value}`): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.GTE,
+      message: message,
+      exclusive: true,
+      params: { value },
+      test: (val) => val >= value
+    });
   }
 
-  lt(value: number, message: ErrorMessage = `Value should be less than ${value}`): NumberSchema {
-    if (this.value >= value) {
-      this.errors.push(message);
-    }
-    return this;
+  lt(value: number, message: Message = `Value should be less than ${value}`): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.LT,
+      message: message,
+      exclusive: true,
+      params: { value },
+      test: (val) => val < value
+    });
   }
 
-  lte(value: number, message: ErrorMessage = `Value should be less than or equal to ${value}`): NumberSchema {
-    if (this.value > value) {
-      this.errors.push(message);
-    }
-    return this;
+  lte(value: number, message: Message = `Value should be less than or equal to ${value}`): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.LTE,
+      message: message,
+      exclusive: true,
+      params: { value },
+      test: (val) => val <= value
+    });
   }
 
-  int(message: ErrorMessage = 'Value should be int'): NumberSchema {
-    if (this.value % 1 !== 0) {
-      this.errors.push(message);
-    }
-    return this;
+  int(message: Message = 'Value should be an integer'): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.INT,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => Number.isInteger(value)
+    });
   }
 
-  multiplyOf(value: number, message: ErrorMessage = `Value should be multiply of ${value}`): NumberSchema {
-    if (this.value % value !== 0) {
-      this.errors.push(message);
-    }
-    return this;
+  multiplyOf(value: number, message: Message = `Value should be a multiple of ${value}`): NumberSchema<T> {
+    return this.addTest({
+      name: NumberFunctionEnum.MULTIPLYOF,
+      message: message,
+      exclusive: true,
+      params: { value },
+      test: (val) => val % value === 0
+    });
   }
 }
 

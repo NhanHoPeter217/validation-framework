@@ -1,73 +1,112 @@
-import { BaseSchema } from './base';
-import { ErrorMessage } from './error';
+import { Schema } from './schema';
+import { Maybe } from '../others';
+import { Message } from '../errors/ValidationError';
 
-class BigIntSchema extends BaseSchema<bigint, ErrorMessage> {
-  private value: bigint = 0n;
-  errors: ErrorMessage[] = [];
+const isNaN = (value: Maybe<bigint>) => typeof value !== 'bigint';
 
+enum BigIntFunctionEnum {
+  POSITIVE = 'positive',
+  NONPOSITIVE = 'nonpositive',
+  NEGATIVE = 'negative',
+  NONNEGATIVE = 'nonnegative',
+  GT = 'gt',
+  GTE = 'gte',
+  LT = 'lt',
+  LTE = 'lte',
+  MULTIPLYOF = 'multiplyOf'
+}
+
+export class BigIntSchema<T extends bigint> extends Schema<T> {
   constructor() {
-    super((value: unknown) => {
-      if (typeof value !== 'number') {
-        this.errors.push('Value should be a bigint');
-        throw new Error('Value should be a bigint');
+    super({
+      type: 'bigint',
+      check: (value) => {
+        return typeof value === 'bigint' && !isNaN(value);
       }
-      return value as unknown as bigint;
     });
   }
+  errors = [];
 
-  positive(message: ErrorMessage = 'Value should be positive'): BigIntSchema {
-    if (this.value < 0) {
-      this.errors.push(message);
-    }
-    return this;
+  positive(message: Message = 'Value should be positive'): BigIntSchema<T> {
+    return this.addTest({
+      name: BigIntFunctionEnum.POSITIVE,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => value > 0n
+    });
   }
-  nonpositive(message: ErrorMessage = 'Value should be non positive'): BigIntSchema {
-    if (this.value >= 0) {
-      this.errors.push(message);
-    }
-    return this;
+  nonpositive(message: Message = 'Value should be non positive'): BigIntSchema<T> {
+    return this.addTest({
+      name: BigIntFunctionEnum.NONPOSITIVE,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => value <= 0n
+    });
   }
-  negative(message: ErrorMessage = 'Value should be negative'): BigIntSchema {
-    if (this.value > 0) {
-      this.errors.push(message);
-    }
-    return this;
+  negative(message: Message = 'Value should be negative'): BigIntSchema<T> {
+    return this.addTest({
+      name: BigIntFunctionEnum.NEGATIVE,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => value < 0n
+    });
   }
-  nonnegative(message: ErrorMessage = 'Value should be non negative'): BigIntSchema {
-    if (this.value <= 0) {
-      this.errors.push(message);
-    }
-    return this;
+  nonnegative(message: Message = 'Value should be non negative'): BigIntSchema<T> {
+    return this.addTest({
+      name: BigIntFunctionEnum.NONNEGATIVE,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => value >= 0n
+    });
   }
-  gt(value: bigint, message: ErrorMessage = `Value should be greater than ${value}`): BigIntSchema {
-    if (this.value <= value) {
-      this.errors.push(message);
-    }
-    return this;
+  gt(value: bigint, message: Message = `Value should be greater than ${value}`): BigIntSchema<T> {
+    return this.addTest({
+      name: BigIntFunctionEnum.GT,
+      message: message,
+      exclusive: true,
+      params: { value },
+      test: (val) => val > value
+    });
   }
-  gte(value: bigint, message: ErrorMessage = `Value should be greater than or equal to ${value}`): BigIntSchema {
-    if (this.value < value) {
-      this.errors.push(message);
-    }
-    return this;
+  gte(value: bigint, message: Message = `Value should be greater than or equal to ${value}`): BigIntSchema<T> {
+    return this.addTest({
+      name: BigIntFunctionEnum.GTE,
+      message: message,
+      exclusive: true,
+      params: { value },
+      test: (val) => val >= value
+    });
   }
-  lt(value: bigint, message: ErrorMessage = `Value should be less than ${value}`): BigIntSchema {
-    if (this.value >= value) {
-      this.errors.push(message);
-    }
-    return this;
+  lt(value: bigint, message: Message = `Value should be less than ${value}`): BigIntSchema<T> {
+    return this.addTest({
+      name: BigIntFunctionEnum.LT,
+      message: message,
+      exclusive: true,
+      params: { value },
+      test: (val) => val < value
+    });
   }
-  lte(value: bigint, message: ErrorMessage = `Value should be less than or equal to ${value}`): BigIntSchema {
-    if (this.value > value) {
-      this.errors.push(message);
-    }
-    return this;
+  lte(value: bigint, message: Message = `Value should be less than or equal to ${value}`): BigIntSchema<T> {
+    return this.addTest({
+      name: BigIntFunctionEnum.LTE,
+      message: message,
+      exclusive: true,
+      params: { value },
+      test: (val) => val <= value
+    });
   }
-  multiplyOf(value: bigint, message: ErrorMessage = `Value should be a multiply of ${value}`): BigIntSchema {
-    if (this.value % value !== 0n) {
-      this.errors.push(message);
-    }
-    return this;
+  multiplyOf(value: bigint, message: Message = `Value should be a multiply of ${value}`): BigIntSchema<T> {
+    return this.addTest({
+      name: BigIntFunctionEnum.MULTIPLYOF,
+      message: message,
+      exclusive: true,
+      params: { value },
+      test: (val) => val % value === 0n
+    });
   }
 }
 

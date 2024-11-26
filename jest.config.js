@@ -1,8 +1,10 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
 export default {
-  testEnvironment: "node",
+  preset: 'ts-jest',
+  testEnvironment: 'node',
   transform: {
-    "^.+.tsx?$": ["ts-jest",{}],
+    '^.+.tsx?$': ['ts-jest', {}]
   },
-  modulePathIgnorePatterns: ['<rootDir>/.yalc/'], // Ignore .yalc folder
+  testMatch: ['**/*.test.ts'],
+  modulePathIgnorePatterns: ['<rootDir>/.yalc/'] // Ignore .yalc folder
 };

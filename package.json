@@ -16,7 +16,7 @@
     "type-check": "tsc --noEmit",
     "prettier-format": "prettier --config .prettierrc.json 'src/**/*.{js,ts}' --write",
     "lint": "npx eslint src/**/*.{js,ts}",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "clean": "rm -rf dist && npx yalc remove validation-framework"
   },
   "keywords": [

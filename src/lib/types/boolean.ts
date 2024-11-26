@@ -1,16 +1,39 @@
-import { BaseSchema } from './base';
-import { ErrorMessage } from './error';
+import { Schema } from './schema';
+import { Message } from '../errors/ValidationError';
 
-class BooleanSchema extends BaseSchema<boolean, ErrorMessage> {
-  private value: boolean = false;
-  errors: ErrorMessage[] = [];
+enum BooleanFunctionEnum {
+  TRUE = 'true',
+  FALSE = 'false'
+}
 
+class BooleanSchema<T extends boolean> extends Schema<T> {
   constructor() {
-    super((value: unknown) => {
-      if (typeof value !== 'boolean') {
-        throw new Error('Value should be a boolean');
+    super({
+      type: 'boolean',
+      check: (value) => {
+        return typeof value === 'number' && !isNaN(value);
       }
-      return value as boolean;
+    });
+  }
+  errors = [];
+
+  true(message: Message = 'Value should be true'): BooleanSchema<T> {
+    return this.addTest({
+      name: BooleanFunctionEnum.TRUE,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => value === true
+    });
+  }
+
+  false(message: Message = 'Value should be false'): BooleanSchema<T> {
+    return this.addTest({
+      name: BooleanFunctionEnum.FALSE,
+      message: message,
+      exclusive: true,
+      params: {},
+      test: (value) => value === false
     });
   }
 }
