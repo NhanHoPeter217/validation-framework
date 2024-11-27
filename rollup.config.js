@@ -9,20 +9,21 @@ export default {
     {
       file: 'dist/bundle.cjs', // Output for CommonJS
       format: 'cjs',
-      sourcemap: true, // Include sourcemaps
+      sourcemap: true // Include sourcemaps
     },
     {
       file: 'dist/bundle.esm.js', // Output for ES Modules
       format: 'esm',
-      sourcemap: true,
-    },
+      sourcemap: true
+    }
   ],
   plugins: [
     resolve(), // Resolves `node_modules`
     commonjs(), // Converts CommonJS modules to ES modules
     json(), // Supports importing JSON files
-    typescript({ // Add Rollup's TypeScript plugin
-      tsconfig: './tsconfig.json', // Specify your TypeScript configuration file
-    }),
-  ],
+    typescript({
+      // Add Rollup's TypeScript plugin
+      tsconfig: './tsconfig.json' // Specify your TypeScript configuration file
+    })
+  ]
 };

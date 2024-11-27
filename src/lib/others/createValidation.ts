@@ -1,9 +1,9 @@
-export type TestFunction = (value: any) => void | boolean | Promise<boolean>;
+export type TestFunction = (value: any) => boolean | Promise<boolean>;
 
 /**
  * Configuration for a validation test.
  */
-export type Test = {
+export interface Test {
   name: string;
 
   /**
@@ -27,6 +27,6 @@ export type Test = {
    * Marks the test as exclusive, meaning only one test of the same name can be active at once.
    */
   exclusive: boolean;
-};
+}
 
 export type InternalTest = Omit<Test, 'params' | 'exclusive'>;
