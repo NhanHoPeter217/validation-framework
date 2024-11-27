@@ -1,5 +1,5 @@
-import { Schema } from './schema';
 import { Message } from '../errors/ValidationError';
+import { Schema } from './schema';
 
 enum BooleanFunctionEnum {
   TRUE = 'true',
@@ -11,13 +11,13 @@ class BooleanSchema<T extends boolean> extends Schema<T> {
     super({
       type: 'boolean',
       check: (value) => {
-        return typeof value === 'number' && !isNaN(value);
+        return typeof value === 'boolean';
       }
     });
   }
   errors = [];
 
-  true(message: Message = 'Value should be true'): BooleanSchema<T> {
+  true(message: Message = 'Value should be true'): this {
     return this.addTest({
       name: BooleanFunctionEnum.TRUE,
       message: message,
@@ -27,7 +27,7 @@ class BooleanSchema<T extends boolean> extends Schema<T> {
     });
   }
 
-  false(message: Message = 'Value should be false'): BooleanSchema<T> {
+  false(message: Message = 'Value should be false'): this {
     return this.addTest({
       name: BooleanFunctionEnum.FALSE,
       message: message,

@@ -1,10 +1,10 @@
-import { InternalTest, Test } from '../others/createValidation';
 import { Message, ValidationError } from '../errors/ValidationError';
+import { InternalTest, Test } from '../others/createValidation';
 
-export type SchemaSpec = {
+export interface SchemaSpec {
   nullable: boolean;
   optional: boolean;
-};
+}
 
 export abstract class Schema<T> {
   /**
@@ -41,13 +41,13 @@ export abstract class Schema<T> {
     return Object.assign(next, this);
   }
 
-  protected nullability(nullable: boolean, message?: Message) {
+  protected nullability(nullable: boolean, message: Message = 'Nullability test failed') {
     const next = this.clone();
 
     next.spec.nullable = nullable;
 
     next.internalTests.nullable = {
-      message: message ?? 'Nullability test failed',
+      message: message,
       name: 'nullable',
       test(value) {
         return value === null ? next.spec.nullable : true;
@@ -56,13 +56,13 @@ export abstract class Schema<T> {
     return next;
   }
 
-  protected optionality(optional: boolean, message?: Message) {
+  protected optionality(optional: boolean, message: Message = 'Optionality test failed') {
     const next = this.clone();
 
     next.spec.optional = optional;
 
     next.internalTests.optionality = {
-      message: message ?? 'Optionality test failed',
+      message: message,
       name: 'optionality',
       test(value) {
         return value === undefined ? next.spec.optional : true;
@@ -94,13 +94,13 @@ export abstract class Schema<T> {
 
   // Add a test to the `tests` array
   addTest(opts: Test): this {
-    if (opts.message === undefined) opts.message = 'Default Error';
+    opts.message = opts.message || 'Default Error';
 
     if (typeof opts.test !== 'function') throw new TypeError('`test` is a required parameters');
 
     const next = this.clone();
 
-    const isExclusive = opts.exclusive || (opts.name && next.exclusiveTests[opts.name] === true);
+    const isExclusive = opts.exclusive || (opts.name && next.exclusiveTests[opts.name]);
 
     if (opts.exclusive) {
       if (!opts.name) throw new TypeError('Exclusive tests must provide a unique `name` identifying the test');
@@ -111,7 +111,7 @@ export abstract class Schema<T> {
     next.tests = next.tests.filter((fn) => {
       if (fn.name === opts.name) {
         if (isExclusive) return false;
-        if (fn.test === test) return false;
+        if (fn.test === opts.test) return false;
       }
       return true;
     });
@@ -134,7 +134,7 @@ export abstract class Schema<T> {
   safeValidate(value: any): ValidationError[] {
     this.errors = [];
     for (const test of Object.values(this.internalTests)) {
-      if (!test.test(value)) {
+      if (test && !test.test(value)) {
         this.errors.push(test.message);
       }
     }

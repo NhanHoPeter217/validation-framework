@@ -1,20 +1,20 @@
 export declare type TestFunction = (value: any) => void | boolean | Promise<boolean>;
-export declare type Test = {
+export declare interface Test {
   name: string;
   test: TestFunction;
   message: string;
   params?: object | null;
   exclusive: boolean;
-};
+}
 
 export declare type InternalTest = Omit<Test, 'params' | 'exclusive'>;
 export declare type Message = string;
 export declare type ValidationError = string;
 
-export declare type SchemaSpec = {
+export declare interface SchemaSpec {
   nullable: boolean;
   optional: boolean;
-};
+}
 
 export abstract class Schema<T> {
   abstract errors: ValidationError[];
@@ -110,4 +110,4 @@ declare function boolean(params?: { required_error: string; invalid_type_error: 
 declare function number(params?: { required_error: string; invalid_type_error: string }): NumberSchema<number>;
 declare function bigint(params?: { required_error: string; invalid_type_error: string }): BigIntSchema<bigint>;
 
-export { boolean, number, bigint };
+export { bigint,boolean, number };

@@ -1,3 +1,3 @@
+export { Message,ValidationError } from './errors';
+export { InternalTest, Maybe,Test, TestFunction } from './others';
 export * from './types';
-export { ValidationError, Message } from './errors';
-export { TestFunction, Test, InternalTest, Maybe } from './others';

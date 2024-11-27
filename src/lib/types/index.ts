@@ -1,3 +1,3 @@
-export * from './number';
-export * from './boolean';
 export * from './bigint';
+export * from './boolean';
+export * from './number';

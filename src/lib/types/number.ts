@@ -1,8 +1,8 @@
-import { Schema } from './schema';
-import { Maybe } from '../others';
 import { Message } from '../errors/ValidationError';
+import { Maybe } from '../others';
+import { Schema } from './schema';
 
-const isNaN = (value: Maybe<number>) => value != +value;
+const isNaN = (value: Maybe<number>) => value == null || value != +value;
 
 enum NumberFunctionEnum {
   ZERO = 'zero',
@@ -32,7 +32,7 @@ class NumberSchema<T extends number> extends Schema<T> {
   }
   errors = [];
 
-  zero(message: Message = 'Value should be 0'): NumberSchema<T> {
+  zero(message: Message = 'Value should be 0'): this {
     return this.addTest({
       name: NumberFunctionEnum.ZERO,
       message: message,
@@ -42,7 +42,7 @@ class NumberSchema<T extends number> extends Schema<T> {
     });
   }
 
-  positive(message: Message = 'Value should be positive'): NumberSchema<T> {
+  positive(message: Message = 'Value should be positive'): this {
     return this.addTest({
       name: NumberFunctionEnum.POSITIVE,
       message: message,
@@ -52,7 +52,7 @@ class NumberSchema<T extends number> extends Schema<T> {
     });
   }
 
-  nonpositive(message: Message = 'Value should be non-positive'): NumberSchema<T> {
+  nonpositive(message: Message = 'Value should be non-positive'): this {
     return this.addTest({
       name: NumberFunctionEnum.NONPOSITIVE,
       message: message,
@@ -62,7 +62,7 @@ class NumberSchema<T extends number> extends Schema<T> {
     });
   }
 
-  negative(message: Message = 'Value should be negative'): NumberSchema<T> {
+  negative(message: Message = 'Value should be negative'): this {
     return this.addTest({
       name: NumberFunctionEnum.NEGATIVE,
       message: message,
@@ -72,7 +72,7 @@ class NumberSchema<T extends number> extends Schema<T> {
     });
   }
 
-  nonnegative(message: Message = 'Value should be non-negative'): NumberSchema<T> {
+  nonnegative(message: Message = 'Value should be non-negative'): this {
     return this.addTest({
       name: NumberFunctionEnum.NONNEGATIVE,
       message: message,
@@ -82,7 +82,7 @@ class NumberSchema<T extends number> extends Schema<T> {
     });
   }
 
-  odd(message: Message = 'Value should be odd'): NumberSchema<T> {
+  odd(message: Message = 'Value should be odd'): this {
     return this.addTest({
       name: NumberFunctionEnum.ODD,
       message: message,
@@ -92,7 +92,7 @@ class NumberSchema<T extends number> extends Schema<T> {
     });
   }
 
-  even(message: Message = 'Value should be even'): NumberSchema<T> {
+  even(message: Message = 'Value should be even'): this {
     return this.addTest({
       name: NumberFunctionEnum.EVEN,
       message: message,
@@ -102,17 +102,17 @@ class NumberSchema<T extends number> extends Schema<T> {
     });
   }
 
-  finite(message: Message = 'Value should be finite'): NumberSchema<T> {
+  finite(message: Message = 'Value should be finite'): this {
     return this.addTest({
       name: NumberFunctionEnum.FINITE,
       message: message,
       exclusive: true,
       params: {},
-      test: (value) => isFinite(value)
+      test: (value: number) => isFinite(value)
     });
   }
 
-  gt(value: number, message: Message = `Value should be greater than ${value}`): NumberSchema<T> {
+  gt(value: number, message: Message = `Value should be greater than ${value.toString()}`): this {
     return this.addTest({
       name: NumberFunctionEnum.GT,
       message: message,
@@ -122,7 +122,7 @@ class NumberSchema<T extends number> extends Schema<T> {
     });
   }
 
-  gte(value: number, message: Message = `Value should be greater than or equal to ${value}`): NumberSchema<T> {
+  gte(value: number, message: Message = `Value should be greater than or equal to ${value.toString()}`): this {
     return this.addTest({
       name: NumberFunctionEnum.GTE,
       message: message,
@@ -132,7 +132,7 @@ class NumberSchema<T extends number> extends Schema<T> {
     });
   }
 
-  lt(value: number, message: Message = `Value should be less than ${value}`): NumberSchema<T> {
+  lt(value: number, message: Message = `Value should be less than ${value.toString()}`): this {
     return this.addTest({
       name: NumberFunctionEnum.LT,
       message: message,
@@ -142,7 +142,7 @@ class NumberSchema<T extends number> extends Schema<T> {
     });
   }
 
-  lte(value: number, message: Message = `Value should be less than or equal to ${value}`): NumberSchema<T> {
+  lte(value: number, message: Message = `Value should be less than or equal to ${value.toString()}`): this {
     return this.addTest({
       name: NumberFunctionEnum.LTE,
       message: message,
@@ -152,7 +152,7 @@ class NumberSchema<T extends number> extends Schema<T> {
     });
   }
 
-  int(message: Message = 'Value should be an integer'): NumberSchema<T> {
+  int(message: Message = 'Value should be an integer'): this {
     return this.addTest({
       name: NumberFunctionEnum.INT,
       message: message,
@@ -162,7 +162,7 @@ class NumberSchema<T extends number> extends Schema<T> {
     });
   }
 
-  multiplyOf(value: number, message: Message = `Value should be a multiple of ${value}`): NumberSchema<T> {
+  multiplyOf(value: number, message: Message = `Value should be a multiple of ${value.toString()}`): this {
     return this.addTest({
       name: NumberFunctionEnum.MULTIPLYOF,
       message: message,

@@ -1,8 +1,5 @@
-import { Schema } from './schema';
-import { Maybe } from '../others';
 import { Message } from '../errors/ValidationError';
-
-const isNaN = (value: Maybe<bigint>) => typeof value !== 'bigint';
+import { Schema } from './schema';
 
 enum BigIntFunctionEnum {
   POSITIVE = 'positive',
@@ -21,13 +18,13 @@ export class BigIntSchema<T extends bigint> extends Schema<T> {
     super({
       type: 'bigint',
       check: (value) => {
-        return typeof value === 'bigint' && !isNaN(value);
+        return typeof value === 'bigint';
       }
     });
   }
   errors = [];
 
-  positive(message: Message = 'Value should be positive'): BigIntSchema<T> {
+  positive(message: Message = 'Value should be positive'): this {
     return this.addTest({
       name: BigIntFunctionEnum.POSITIVE,
       message: message,
@@ -36,7 +33,7 @@ export class BigIntSchema<T extends bigint> extends Schema<T> {
       test: (value) => value > 0n
     });
   }
-  nonpositive(message: Message = 'Value should be non positive'): BigIntSchema<T> {
+  nonpositive(message: Message = 'Value should be non positive'): this {
     return this.addTest({
       name: BigIntFunctionEnum.NONPOSITIVE,
       message: message,
@@ -45,7 +42,7 @@ export class BigIntSchema<T extends bigint> extends Schema<T> {
       test: (value) => value <= 0n
     });
   }
-  negative(message: Message = 'Value should be negative'): BigIntSchema<T> {
+  negative(message: Message = 'Value should be negative'): this {
     return this.addTest({
       name: BigIntFunctionEnum.NEGATIVE,
       message: message,
@@ -54,7 +51,7 @@ export class BigIntSchema<T extends bigint> extends Schema<T> {
       test: (value) => value < 0n
     });
   }
-  nonnegative(message: Message = 'Value should be non negative'): BigIntSchema<T> {
+  nonnegative(message: Message = 'Value should be non negative'): this {
     return this.addTest({
       name: BigIntFunctionEnum.NONNEGATIVE,
       message: message,
@@ -63,7 +60,7 @@ export class BigIntSchema<T extends bigint> extends Schema<T> {
       test: (value) => value >= 0n
     });
   }
-  gt(value: bigint, message: Message = `Value should be greater than ${value}`): BigIntSchema<T> {
+  gt(value: bigint, message: Message = `Value should be greater than ${value.toString()}`): this {
     return this.addTest({
       name: BigIntFunctionEnum.GT,
       message: message,
@@ -72,7 +69,7 @@ export class BigIntSchema<T extends bigint> extends Schema<T> {
       test: (val) => val > value
     });
   }
-  gte(value: bigint, message: Message = `Value should be greater than or equal to ${value}`): BigIntSchema<T> {
+  gte(value: bigint, message: Message = `Value should be greater than or equal to ${value.toString()}`): this {
     return this.addTest({
       name: BigIntFunctionEnum.GTE,
       message: message,
@@ -81,7 +78,7 @@ export class BigIntSchema<T extends bigint> extends Schema<T> {
       test: (val) => val >= value
     });
   }
-  lt(value: bigint, message: Message = `Value should be less than ${value}`): BigIntSchema<T> {
+  lt(value: bigint, message: Message = `Value should be less than ${value.toString()}`): this {
     return this.addTest({
       name: BigIntFunctionEnum.LT,
       message: message,
@@ -90,7 +87,7 @@ export class BigIntSchema<T extends bigint> extends Schema<T> {
       test: (val) => val < value
     });
   }
-  lte(value: bigint, message: Message = `Value should be less than or equal to ${value}`): BigIntSchema<T> {
+  lte(value: bigint, message: Message = `Value should be less than or equal to ${value.toString()}`): this {
     return this.addTest({
       name: BigIntFunctionEnum.LTE,
       message: message,
@@ -99,7 +96,7 @@ export class BigIntSchema<T extends bigint> extends Schema<T> {
       test: (val) => val <= value
     });
   }
-  multiplyOf(value: bigint, message: Message = `Value should be a multiply of ${value}`): BigIntSchema<T> {
+  multiplyOf(value: bigint, message: Message = `Value should be a multiply of ${value.toString()}`): this {
     return this.addTest({
       name: BigIntFunctionEnum.MULTIPLYOF,
       message: message,
