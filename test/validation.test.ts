@@ -1,6 +1,16 @@
-import { NumberSchema } from 'validation-framework';
+import { v } from 'validation-framework';
 
-let numberSchema = new NumberSchema().min(5);
+describe('NumberSchema', () => {
+  let numberSchema = v.number().gt(0).lt(10);
+  test('should pass validation', () => {
+    expect(numberSchema.safeValidate(5)).toEqual([]);
+  });
 
-numberSchema.safeValidate(4); // false
-numberSchema.safeValidate(null); // true
+  test('should fail validation', () => {
+    expect(numberSchema.safeValidate(15)).toEqual([
+      {
+        message: 'Value must be less than 10'
+      }
+    ]);
+  });
+});
