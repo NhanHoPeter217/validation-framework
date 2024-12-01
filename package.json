@@ -9,8 +9,8 @@
     "build": "rollup -c",
     "update": "npm run lint && npm run prettier-format && npm run type-check && npm run build",
     "type-check": "tsc --noEmit",
-    "prettier-format": "prettier --config .prettierrc.json src/**/*.{js,ts} --write",
-    "lint": "eslint src/**/*.{js,ts} --fix",
+    "prettier-format": "prettier --config .prettierrc.json \"src/**/*.{js,ts}\" --write",
+    "lint": "eslint \"src/**/*.{js,ts}\" --fix",
     "test": "jest",
     "clean": "rimraf dist"
   },
