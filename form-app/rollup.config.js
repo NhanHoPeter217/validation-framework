@@ -2,7 +2,6 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 
 export default {
   input: 'src/index.ts', // Your entry file
@@ -22,7 +21,6 @@ export default {
     resolve(), // Resolves `node_modules`
     commonjs(), // Converts CommonJS modules to ES modules
     json(), // Supports importing JSON files
-    peerDepsExternal(), // Exclude peer dependencies
     typescript({
       // Add Rollup's TypeScript plugin
       tsconfig: './tsconfig.json' // Specify your TypeScript configuration file
