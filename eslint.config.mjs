@@ -17,6 +17,7 @@ export default tseslint.config(
     rules: {
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-unused-vars': 'off',
+      'no-useless-escape': 'warn',
       'simple-import-sort/imports': 'warn',
       'simple-import-sort/exports': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
