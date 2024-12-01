@@ -1,27 +1,11 @@
+import { NumberFunctionEnum } from '../enums';
 import { Message } from '../errors/ValidationError';
 import { Maybe } from '../others';
 import { Schema } from './schema';
 
 const isNaN = (value: Maybe<number>) => value == null || value != +value;
 
-enum NumberFunctionEnum {
-  ZERO = 'zero',
-  POSITIVE = 'positive',
-  NONPOSITIVE = 'nonpositive',
-  NEGATIVE = 'negative',
-  NONNEGATIVE = 'nonnegative',
-  ODD = 'odd',
-  EVEN = 'even',
-  FINITE = 'finite',
-  GT = 'gt',
-  GTE = 'gte',
-  LT = 'lt',
-  LTE = 'lte',
-  INT = 'int',
-  MULTIPLYOF = 'multiplyOf'
-}
-
-class NumberSchema<T extends number> extends Schema<T> {
+class NumberSchema extends Schema<number> {
   constructor() {
     super({
       type: 'number',
