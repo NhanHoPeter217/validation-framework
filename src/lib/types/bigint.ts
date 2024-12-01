@@ -1,19 +1,8 @@
+import { BigIntFunctionEnum } from '../enums';
 import { Message } from '../errors/ValidationError';
 import { Schema } from './schema';
 
-enum BigIntFunctionEnum {
-  POSITIVE = 'positive',
-  NONPOSITIVE = 'nonpositive',
-  NEGATIVE = 'negative',
-  NONNEGATIVE = 'nonnegative',
-  GT = 'gt',
-  GTE = 'gte',
-  LT = 'lt',
-  LTE = 'lte',
-  MULTIPLYOF = 'multiplyOf'
-}
-
-export class BigIntSchema<T extends bigint> extends Schema<T> {
+class BigIntSchema extends Schema<bigint> {
   constructor() {
     super({
       type: 'bigint',
