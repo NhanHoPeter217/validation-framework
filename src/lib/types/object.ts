@@ -42,19 +42,37 @@ class ObjectSchema<T extends RawShape> extends Schema<object> {
     const next = this.clone();
     next.spec.shape = Object.keys(mask).reduce((acc, key) => {
       if (key in this.spec.shape) {
-        console.log(key);
         acc[key] = this.spec.shape[key];
       }
       return acc;
     }, {} as RawShape);
-    console.log('next' + next);
+    return next;
+  }
+
+  omit<Mask extends { [k in keyof T]?: true }>(mask: Mask): ObjectSchema<Omit<T, keyof Mask>> {
+    const next = this.clone();
+    next.spec.shape = Object.keys(this.spec.shape).reduce((acc, key) => {
+      if (!(key in mask)) {
+        acc[key] = this.spec.shape[key];
+      }
+      return acc;
+    }, {} as RawShape);
+    return next;
+  }
+
+  partial(): this {
+    const next = this.clone();
+    next.spec.optional = true;
+    return next;
+  }
+
+  keyof(): this {
+    const next = this.clone();
+    next.spec.optional = false;
     return next;
   }
 }
 
-<T extends RawShape>(shape: T, params?: { required_error: string; invalid_type_error: string }) => {
-  return new ObjectSchema<RawShape>(shape);
-};
 export const object: <T extends RawShape>(
   shape: T,
   params?: { required_error: string; invalid_type_error: string }
