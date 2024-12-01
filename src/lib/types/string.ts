@@ -75,7 +75,7 @@ class StringSchema<T extends string> extends Schema<T> {
     return super.required().nonEmpty();
   }
 
-  maxLen(value: number, message: Message = `String length should not exceed ${value}`): StringSchema<T> {
+  max(value: number, message: Message = `String length should not exceed ${value}`): StringSchema<T> {
     return this.addTest({
       name: StringFunctionEnum.MAXLENGTH,
       message,
@@ -85,7 +85,7 @@ class StringSchema<T extends string> extends Schema<T> {
     });
   }
 
-  minLen(value: number, message: Message = `String length should be at least ${value}`): StringSchema<T> {
+  min(value: number, message: Message = `String length should be at least ${value}`): StringSchema<T> {
     return this.addTest({
       name: StringFunctionEnum.MINLENGTH,
       message,
