@@ -1,7 +1,7 @@
 import { Message, ValidationError } from '../errors/ValidationError';
 import { InternalTest, Test } from '../others/createValidation';
 export type RawShape = Record<string, any>;
-type TypeOf<T extends Schema<any>> = T extends Schema<infer U> ? U : never;
+export type TypeOf<T extends Schema<any>> = T extends Schema<infer U> ? U : never;
 export type { TypeOf as infer };
 
 export interface SchemaSpec {

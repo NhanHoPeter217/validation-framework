@@ -16,6 +16,8 @@ console.log(schema.safeValidate({ age: 20, isStudent: true, address: { city: 1, 
 
 const pickAge = schema.pick({ age: true });
 
+const type = v.type(schema);
+
 // let boolean = v.boolean();
 // let numberSchema = v.object({
 //   name: v.number()

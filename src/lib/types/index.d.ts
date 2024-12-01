@@ -11,7 +11,7 @@ export declare type InternalTest = Omit<Test, 'params' | 'exclusive'>;
 export declare type Message = string;
 export declare type ValidationError = string;
 export type RawShape = Record<string, any>;
-export declare type TypeOf<T extends Schema<any>> = T extends Schema<infer U> ? U : never;
+export type TypeOf<T extends Schema<any>> = T extends Schema<infer U> ? U : never;
 export type { TypeOf as infer };
 
 export declare type AnyObjectSchema = ObjectSchema<any>;
@@ -85,7 +85,7 @@ export declare class ObjectSchema<T extends RawShape> extends Schema<T> {
   extend(shape: Record<string, Schema<any>>): this;
   merge<T extends AnyObjectSchema>(schema: T): this;
   pick<Mask extends { [k in keyof T]?: true }>(mask: Mask): ObjectSchema<Pick<T, Extract<keyof T, keyof Mask>>>;
-  omit(keys: string[]): this;
+  omit<Mask extends { [k in keyof T]?: true }>(mask: Mask): ObjectSchema<Omit<T, keyof Mask>>;
   partial(): this;
   keyof(): this;
 }
