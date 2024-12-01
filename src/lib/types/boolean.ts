@@ -1,12 +1,8 @@
+import { BooleanFunctionEnum } from '../enums';
 import { Message } from '../errors/ValidationError';
 import { Schema } from './schema';
 
-enum BooleanFunctionEnum {
-  TRUE = 'true',
-  FALSE = 'false'
-}
-
-class BooleanSchema<T extends boolean> extends Schema<T> {
+class BooleanSchema extends Schema<boolean> {
   constructor() {
     super({
       type: 'boolean',

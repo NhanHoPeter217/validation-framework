@@ -1,5 +1,8 @@
 import { Message, ValidationError } from '../errors/ValidationError';
 import { InternalTest, Test } from '../others/createValidation';
+export type RawShape = Record<string, any>;
+type TypeOf<T extends Schema<any>> = T extends Schema<infer U> ? U : never;
+export type { TypeOf as infer };
 
 export interface SchemaSpec {
   nullable: boolean;
@@ -7,6 +10,7 @@ export interface SchemaSpec {
 }
 
 export abstract class Schema<T> {
+  readonly _type!: T;
   /**
    * Store the tests of child Schemas or user-defined tests
    */
