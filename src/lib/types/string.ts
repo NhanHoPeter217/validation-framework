@@ -53,6 +53,28 @@ class StringSchema<T extends string> extends Schema<T> {
   }
   errors = [];
 
+  protected emptyPossibility(emptyPossibility: boolean, message: Message = 'Empty possibility test failed') {
+    const next = this.clone();
+
+    next.internalTests.emptyPossibility = {
+      message: message,
+      name: 'empty possibility',
+      test(value) {
+        return value === '' ? emptyPossibility : true;
+      }
+    };
+
+    return next;
+  }
+
+  nonEmpty(message = 'The value must not be an empty string') {
+    return this.emptyPossibility(false, message);
+  }
+
+  required(): this {
+    return super.required().nonEmpty();
+  }
+
   maxLen(value: number, message: Message = `String length should not exceed ${value}`): StringSchema<T> {
     return this.addTest({
       name: StringFunctionEnum.MAXLENGTH,

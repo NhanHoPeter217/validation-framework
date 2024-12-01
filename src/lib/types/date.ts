@@ -24,7 +24,9 @@ class DateSchema<T extends Date> extends Schema<T> {
   errors = [];
 
   safeValidate(value: any): ValidationError[] {
-    return super.safeValidate(this.prepareParam(value, DateFunctionEnum.SAFE_VALIDATE));
+    return typeof value === 'string' || typeof value === 'number'
+      ? super.safeValidate(this.prepareParam(value, DateFunctionEnum.SAFE_VALIDATE))
+      : super.safeValidate(value);
   }
 
   private prepareParam(ref: unknown, name: string): Date {
@@ -41,6 +43,7 @@ class DateSchema<T extends Date> extends Schema<T> {
       param = ref as Date;
     }
 
+    console.log(param);
     return param;
   }
 
