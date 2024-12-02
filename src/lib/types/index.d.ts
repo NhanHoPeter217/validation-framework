@@ -110,4 +110,4 @@ declare function boolean(params?: { required_error: string; invalid_type_error: 
 declare function number(params?: { required_error: string; invalid_type_error: string }): NumberSchema<number>;
 declare function bigint(params?: { required_error: string; invalid_type_error: string }): BigIntSchema<bigint>;
 
-export { bigint,boolean, number };
+export { bigint, boolean, number };
