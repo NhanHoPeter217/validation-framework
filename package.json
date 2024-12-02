@@ -15,7 +15,7 @@
     "update": "npm run lint && npm run prettier-format && npm run build && npm run type-check && npm run publish-locally && npm run update-framework-locally",
     "type-check": "tsc --noEmit",
     "prettier-format": "prettier --config .prettierrc.json 'src/**/*.{js,ts}' --write",
-    "lint": "eslint 'src/**/*.{js,ts}' --fix",
+    "lint": "eslint src/**/*.{js,ts} --fix",
     "test": "jest",
     "clean": "rm -rf dist && npx yalc remove validation-framework"
   },
