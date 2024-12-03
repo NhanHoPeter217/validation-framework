@@ -15,6 +15,9 @@ export type TypeOf<T extends Schema<any>> = T extends Schema<infer U> ? U : neve
 export type { TypeOf as infer };
 
 export declare type AnyObjectSchema = ObjectSchema<any>;
+export declare type FieldsErrors<T> = {
+  [K in keyof T]?: T[K] extends RawShape ? FieldsErrors<T[K]> : ValidationError[];
+};
 
 export declare interface SchemaSpec {
   nullable: boolean;
@@ -35,7 +38,7 @@ export abstract class Schema<T> {
   nonRequired(): Schema<T>;
   addTest(opts: Test): Schema<T>;
   isType(v: unknown): boolean;
-  safeValidate(value: any): ValidationError[];
+  safeValidate(value: any): ValidationError[] | FieldsErrors<any>;
 }
 
 export declare class BooleanSchema extends Schema<boolean> {
@@ -88,6 +91,7 @@ export declare class ObjectSchema<T extends RawShape> extends Schema<T> {
   omit<Mask extends { [k in keyof T]?: true }>(mask: Mask): ObjectSchema<Omit<T, keyof Mask>>;
   partial(): this;
   keyof(): this;
+  safeValidate(value: any): FieldsErrors<any> | ValidationError[];
 }
 
 declare const boolean: (_params?: { required_error: string; invalid_type_error: string }) => BooleanSchema;

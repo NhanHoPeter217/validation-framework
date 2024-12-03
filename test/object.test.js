@@ -12,11 +12,11 @@ const schema = v.object({
     .required()
 });
 
-console.log(schema.safeValidate({ age: 20, isStudent: true, address: { city: 1, street: 2 } })); // true
+console.log(schema.safeValidate({ age: '30', isStudent: 'haha', address: { city: 'haha', street: 2 } })); // true
 
-const pickAge = schema.pick({ age: true });
+// const pickAge = schema.pick({ age: true });
 
-const type = v.type(schema);
+// console.log(pickAge.safeValidate({ age: '20' })); // true
 
 // let boolean = v.boolean();
 // let numberSchema = v.object({
