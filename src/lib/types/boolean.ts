@@ -14,7 +14,8 @@ class BooleanSchema extends Schema<boolean> {
   errors = [];
 
   true(message: Message = 'Value should be true'): this {
-    return this.addTest({
+    const next = this.clone();
+    return next.addTest({
       name: BooleanFunctionEnum.TRUE,
       message: message,
       exclusive: true,
@@ -24,7 +25,8 @@ class BooleanSchema extends Schema<boolean> {
   }
 
   false(message: Message = 'Value should be false'): this {
-    return this.addTest({
+    const next = this.clone();
+    return next.addTest({
       name: BooleanFunctionEnum.FALSE,
       message: message,
       exclusive: true,

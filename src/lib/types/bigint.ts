@@ -14,7 +14,8 @@ class BigIntSchema extends Schema<bigint> {
   errors = [];
 
   positive(message: Message = 'Value should be positive'): this {
-    return this.addTest({
+    const next = this.clone();
+    return next.addTest({
       name: BigIntFunctionEnum.POSITIVE,
       message: message,
       exclusive: true,
@@ -23,7 +24,8 @@ class BigIntSchema extends Schema<bigint> {
     });
   }
   nonpositive(message: Message = 'Value should be non positive'): this {
-    return this.addTest({
+    const next = this.clone();
+    return next.addTest({
       name: BigIntFunctionEnum.NONPOSITIVE,
       message: message,
       exclusive: true,
@@ -32,7 +34,8 @@ class BigIntSchema extends Schema<bigint> {
     });
   }
   negative(message: Message = 'Value should be negative'): this {
-    return this.addTest({
+    const next = this.clone();
+    return next.addTest({
       name: BigIntFunctionEnum.NEGATIVE,
       message: message,
       exclusive: true,
@@ -41,7 +44,8 @@ class BigIntSchema extends Schema<bigint> {
     });
   }
   nonnegative(message: Message = 'Value should be non negative'): this {
-    return this.addTest({
+    const next = this.clone();
+    return next.addTest({
       name: BigIntFunctionEnum.NONNEGATIVE,
       message: message,
       exclusive: true,
@@ -50,7 +54,8 @@ class BigIntSchema extends Schema<bigint> {
     });
   }
   gt(value: bigint, message: Message = `Value should be greater than ${value.toString()}`): this {
-    return this.addTest({
+    const next = this.clone();
+    return next.addTest({
       name: BigIntFunctionEnum.GT,
       message: message,
       exclusive: true,
@@ -59,7 +64,8 @@ class BigIntSchema extends Schema<bigint> {
     });
   }
   gte(value: bigint, message: Message = `Value should be greater than or equal to ${value.toString()}`): this {
-    return this.addTest({
+    const next = this.clone();
+    return next.addTest({
       name: BigIntFunctionEnum.GTE,
       message: message,
       exclusive: true,
@@ -68,7 +74,8 @@ class BigIntSchema extends Schema<bigint> {
     });
   }
   lt(value: bigint, message: Message = `Value should be less than ${value.toString()}`): this {
-    return this.addTest({
+    const next = this.clone();
+    return next.addTest({
       name: BigIntFunctionEnum.LT,
       message: message,
       exclusive: true,
@@ -77,7 +84,8 @@ class BigIntSchema extends Schema<bigint> {
     });
   }
   lte(value: bigint, message: Message = `Value should be less than or equal to ${value.toString()}`): this {
-    return this.addTest({
+    const next = this.clone();
+    return next.addTest({
       name: BigIntFunctionEnum.LTE,
       message: message,
       exclusive: true,
@@ -86,7 +94,8 @@ class BigIntSchema extends Schema<bigint> {
     });
   }
   multiplyOf(value: bigint, message: Message = `Value should be a multiply of ${value.toString()}`): this {
-    return this.addTest({
+    const next = this.clone();
+    return next.addTest({
       name: BigIntFunctionEnum.MULTIPLYOF,
       message: message,
       exclusive: true,

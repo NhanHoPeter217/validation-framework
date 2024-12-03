@@ -1,4 +1,5 @@
-import { RawShape, Schema, SchemaSpec } from './schema';
+import { ValidationError } from '../errors/ValidationError';
+import { FieldsErrors, RawShape, Schema, SchemaSpec } from './schema';
 
 type ObjectSchemaSpec = SchemaSpec & {
   shape: RawShape;
@@ -16,7 +17,7 @@ class ObjectSchema<T extends RawShape> extends Schema<object> {
 
     this.spec.shape = shape;
   }
-  errors = [];
+  errors = [] as ValidationError[];
 
   get output() {
     type Output = {
@@ -29,11 +30,49 @@ class ObjectSchema<T extends RawShape> extends Schema<object> {
     return this.spec.shape;
   }
 
+  safeValidate(value: any): ValidationError[] | FieldsErrors<any> {
+    this.errors = [];
+
+    if (!this.isType(value)) {
+      this.errors.push(`The value must be of type ${this.type}`);
+      return this.errors;
+    }
+
+    const fieldErrors: FieldsErrors<T> = {};
+    for (const [key, schema] of Object.entries(this.spec.shape)) {
+      const fieldValue = value[key];
+      const fieldErrorsForKey = (schema as Schema<any>).safeValidate(fieldValue);
+      if (Array.isArray(fieldErrorsForKey) && fieldErrorsForKey.length > 0) {
+        (fieldErrors as FieldsErrors<any>)[key] = fieldErrorsForKey;
+      } else if (typeof fieldErrorsForKey === 'object' && Object.keys(fieldErrorsForKey).length > 0) {
+        (fieldErrors as FieldsErrors<any>)[key] = fieldErrorsForKey;
+      }
+    }
+    if (Object.keys(fieldErrors).length === 0) {
+      for (const test of Object.values(this.internalTests)) {
+        if (test && !test.test(value)) {
+          this.errors.push(test.message);
+        }
+      }
+
+      for (const test of this.tests) {
+        if (!test.test(value)) {
+          this.errors.push(test.message);
+        }
+      }
+
+      return this.errors;
+    }
+
+    return fieldErrors;
+  }
+
   extend(shape: RawShape): this {
     const next = this.clone();
     next.spec.shape = { ...this.spec.shape, ...shape };
     return next;
   }
+
   merge<T extends AnyObjectSchema>(schema: T): this {
     return this.extend(schema.spec.shape);
   }
