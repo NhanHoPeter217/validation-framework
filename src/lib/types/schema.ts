@@ -1,5 +1,13 @@
 import { Message, ValidationError } from '../errors/ValidationError';
 import { InternalTest, Test } from '../others/createValidation';
+export type RawShape = Record<string, any>;
+
+export type TypeOf<T extends Schema<any>> = T extends Schema<infer U> ? U : never;
+export type { TypeOf as infer };
+
+export type FieldsErrors<T> = {
+  [K in keyof T]?: T[K] extends RawShape ? FieldsErrors<T[K]> : ValidationError[];
+};
 
 export interface SchemaSpec {
   nullable: boolean;
@@ -7,6 +15,7 @@ export interface SchemaSpec {
 }
 
 export abstract class Schema<T> {
+  readonly _type!: T;
   /**
    * Store the tests of child Schemas or user-defined tests
    */
@@ -131,7 +140,7 @@ export abstract class Schema<T> {
     return this.typeCheck(v);
   }
 
-  safeValidate(value: any): ValidationError[] {
+  safeValidate(value: any): ValidationError[] | FieldsErrors<any> {
     this.errors = [];
     for (const test of Object.values(this.internalTests)) {
       if (test && !test.test(value)) {
