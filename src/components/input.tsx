@@ -5,6 +5,7 @@ import { Error } from '../lib/errors';
 
 type InputProps = {
   validator: Schema<any>;
+  label?: string;
 } & ComponentProps<'input'>;
 
 //Create a template <T> where T is the type of the value
@@ -25,11 +26,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ type, validator, onCha
     if (type === 'number') setErrors(validator.safeValidate(Number(e.target.value)));
     else setErrors(validator.safeValidate(e.target.value));
   };
-
-  // use schema o day
-  //  state chua value
-  //  state chua error
-  // onchange thi validate
 
   return (
     <div>
