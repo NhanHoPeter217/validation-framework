@@ -1,4 +1,4 @@
-import { v } from 'validation-framework';
+import { v } from '../src';
 
 describe('NumberSchema', () => {
   let numberSchema = v.number().gt(0).lt(10);
@@ -17,6 +17,6 @@ describe('NumberSchema', () => {
   // });
 
   test('should pass validation', () => {
-    expect(date.safeValidate("1989-12-01T00:00:00+05:00")).toEqual([]);
+    expect(date.safeValidate('1989-12-01T00:00:00+05:00')).toEqual([]);
   });
 });
