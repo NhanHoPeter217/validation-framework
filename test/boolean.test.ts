@@ -7,6 +7,8 @@ describe('BooleanSchema', () => {
   });
 
   test('should fail validation', () => {
-    expect(booleanSchema.safeValidate('hi')).toEqual(['The value must be of type boolean']);
+    expect(booleanSchema.safeValidate('hi')).toEqual([
+      { code: 'invalid_type', message: 'Expected boolean, but received string' }
+    ]);
   });
 });

@@ -1,8 +1,8 @@
 import { BooleanFunctionEnum } from '../enums';
-import { Message } from '../errors/ValidationError';
+import { Error, Message } from '../errors/ValidationError';
 import { Schema } from './schema';
 
-class BooleanSchema extends Schema<boolean> {
+export class BooleanSchema extends Schema<boolean> {
   constructor() {
     super({
       type: 'boolean',
@@ -11,27 +11,29 @@ class BooleanSchema extends Schema<boolean> {
       }
     });
   }
-  errors = [];
+  errors: Error[] = [];
 
   true(message: Message = 'Value should be true'): this {
-    const next = this.clone();
-    return next.addTest({
-      name: BooleanFunctionEnum.TRUE,
-      message: message,
-      exclusive: true,
-      params: {},
-      test: (value) => value === true
+    return this.mutate((next) => {
+      return next.addTest({
+        name: BooleanFunctionEnum.TRUE,
+        message: message,
+        exclusive: true,
+        params: {},
+        test: (value) => value === true
+      });
     });
   }
 
   false(message: Message = 'Value should be false'): this {
-    const next = this.clone();
-    return next.addTest({
-      name: BooleanFunctionEnum.FALSE,
-      message: message,
-      exclusive: true,
-      params: {},
-      test: (value) => value === false
+    return this.mutate((next) => {
+      return next.addTest({
+        name: BooleanFunctionEnum.FALSE,
+        message: message,
+        exclusive: true,
+        params: {},
+        test: (value) => value === false
+      });
     });
   }
 }

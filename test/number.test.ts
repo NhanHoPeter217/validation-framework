@@ -1,4 +1,4 @@
-import { v } from '../src';
+import { v } from '../src/index';
 
 describe('NumberSchema', () => {
   const numberSchema = v.number().gt(0).lt(10);
@@ -7,6 +7,6 @@ describe('NumberSchema', () => {
   });
 
   test('should fail validation', () => {
-    expect(numberSchema.safeValidate(15)).toEqual(['Value should be less than 10']);
+    expect(numberSchema.safeValidate(15)).toEqual([{ code: 'lt', message: 'Value should be less than 10' }]);
   });
 });
