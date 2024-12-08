@@ -1,12 +1,8 @@
+import { BooleanFunctionEnum } from '../enums';
 import { Message } from '../errors/ValidationError';
 import { Schema } from './schema';
 
-enum BooleanFunctionEnum {
-  TRUE = 'true',
-  FALSE = 'false'
-}
-
-class BooleanSchema<T extends boolean> extends Schema<T> {
+class BooleanSchema extends Schema<boolean> {
   constructor() {
     super({
       type: 'boolean',
@@ -18,7 +14,8 @@ class BooleanSchema<T extends boolean> extends Schema<T> {
   errors = [];
 
   true(message: Message = 'Value should be true'): this {
-    return this.addTest({
+    const next = this.clone();
+    return next.addTest({
       name: BooleanFunctionEnum.TRUE,
       message: message,
       exclusive: true,
@@ -28,7 +25,8 @@ class BooleanSchema<T extends boolean> extends Schema<T> {
   }
 
   false(message: Message = 'Value should be false'): this {
-    return this.addTest({
+    const next = this.clone();
+    return next.addTest({
       name: BooleanFunctionEnum.FALSE,
       message: message,
       exclusive: true,

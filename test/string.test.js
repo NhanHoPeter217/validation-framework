@@ -1,4 +1,4 @@
-import { v } from 'validation-framework';
+import { v } from '../src';
 
 let stringSchema = v.string();
 
