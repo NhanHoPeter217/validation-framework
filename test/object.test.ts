@@ -1,60 +1,78 @@
 import { v } from '../src';
 
-const schema = v.object({
-  age: v.number(),
-  isStudent: v.boolean(),
-  address: v.object({
-    city: v.object({
-      name: v.object({
-        street: v.object({
-          name: v.string().required()
+describe('ObjectSchema', () => {
+    const schema = v.object({
+        name: v.string(),
+        age: v.number(),
+        isStudent: v.boolean(),
+        address: v.object({
+            city: v.number(),
+            street: v.string()
         })
-      })
-    }),
-    street: v.string()
-  })
-});
+    });
 
-type Schema = v.infer<typeof schema>;
+    const schema2 = v.object({
+        information: schema,
+        hello: {
+            world: v.string(),
+            team: v.number()
+        },
+        extra: v.string(),
+    })
 
-const obj = {
-  age: 20,
-  isStudent: true,
-  name: 'John',
-  address: {
-    city: {
-      name: {
-        street: {
-          name: 'Main Street'
+    const circularObject: any = {
+        name: 'John Doe',
+        age: 25,
+        isStudent: true,
+        address: {
+            city: 12345,
+            street: '123 Elm St'
         }
-      }
-    },
-    street: 'Broadway'
-  }
-};
+    };
 
-// obj.self = obj; // Circular Reference
+    // Test for missing required field
+    // test('should pass validation', () => {
+    //     expect(schema.safeValidate({
+    //         name: 'John Doe'
+    //     })).toEqual([]);
+    // });
 
-console.log(schema.safeValidate(obj));
+    // Circular reference test
+    // test('should detect circular reference error', () => {
+    //   // Create an object with a circular reference
+    //   // const circularObject: any = {};
+    //   circularObject.self = circularObject;
+  
+    //   // Attempt to validate the object with the schema
+    //   const result = schema.safeValidate(circularObject);
+  
+    //   // Check for validation errors specifically related to circular references
+    //   expect(result).toEqual([
+    //       {
+    //         code: 'circular_reference',
+    //         message: 'Circular reference detected',
+    //       },
+    //   ]);
+    // });
 
-// Test 3: Thêm dư field vẫn ko bị lỗi, thấy yup vẫn báo lỗi nếu dư field
-const schema2 = v.object({
-  age: v.number().required(),
-  isStudent: v.boolean(),
-  address: v.object({
-    city: v.object({
-      name: v.object({
-        street: v.object({
-          name: v.string().required()
-        })
-      })
-    }),
-    street: v.string()
-  })
-});
-
-describe('Test 3', () => {
-  test('should pass validation', () => {
-    expect(schema2.safeValidate(obj)).toEqual([]);
-  });
+    // Test for nested schema and nested object => nested schema is fine
+    // but nested object is not (nested object in here is the field 'hello')
+    test('should pass validation', () => {
+        expect(schema2.safeValidate({
+            information: {
+                name: 'John Doe',
+                age: 25,
+                isStudent: true,
+                address: {
+                    city: 12345,
+                    street: '123 Elm St'
+                }
+            },
+            hello: {
+                world: 'hello',
+                team: 123
+            },
+            extra: 'extra'
+        })).toEqual([]);
+    });
 });
