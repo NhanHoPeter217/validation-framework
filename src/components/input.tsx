@@ -1,6 +1,7 @@
 import { ChangeEvent, ComponentProps, forwardRef, useState } from 'react';
 
 import { Schema } from '../lib/types/schema';
+import { Error } from '../lib/errors';
 
 type InputProps = {
   validator: Schema<any>;
@@ -16,7 +17,7 @@ type InputProps = {
 //Return an input element with the ref and props
 
 const Input = forwardRef<HTMLInputElement, InputProps>(({ type, validator, onChange, ...props }, ref) => {
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errors, setErrors] = useState<Error[]>([]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (onChange) onChange(e);
@@ -33,10 +34,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ type, validator, onCha
   return (
     <div>
       <input type={type} ref={ref} {...props} onChange={handleChange} />
-      {errors ? (
+      {Array.isArray(errors) && errors.length > 0 ? (
         <>
-          {errors.map((error, index) => {
-            return <span key={index}>{error}</span>;
+          {errors.map((error: Error, index: number) => {
+            return <span key={index}>{error.message}</span>;
           })}
         </>
       ) : null}

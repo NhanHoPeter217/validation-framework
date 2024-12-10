@@ -11,8 +11,6 @@ export declare type InternalTest = Omit<Test, 'params' | 'exclusive'>;
 export declare type Message = string;
 export declare type ValidationError = string;
 export type RawShape = Record<string, any>;
-export type TypeOf<T extends Schema<any>> = T extends Schema<infer U> ? U : never;
-export type { TypeOf as infer };
 
 export declare type AnyObjectSchema = ObjectSchema<any>;
 export declare type FieldsErrors<T> = {

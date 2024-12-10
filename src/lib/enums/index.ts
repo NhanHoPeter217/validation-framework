@@ -17,7 +17,7 @@ export enum NumberFunctionEnum {
   LT = 'lt',
   LTE = 'lte',
   INT = 'int',
-  MULTIPLYOF = 'multiplyOf'
+  MULTIPLEOF = 'multipleOf'
 }
 
 export enum BigIntFunctionEnum {
@@ -29,5 +29,27 @@ export enum BigIntFunctionEnum {
   GTE = NumberFunctionEnum.GTE,
   LT = NumberFunctionEnum.LT,
   LTE = NumberFunctionEnum.LTE,
-  MULTIPLYOF = NumberFunctionEnum.MULTIPLYOF
+  MULTIPLYOF = NumberFunctionEnum.MULTIPLEOF
+}
+
+export enum DateFunctionEnum {
+  MIN = 'min',
+  MAX = 'max',
+  SAFE_VALIDATE = 'safeValidate'
+}
+
+export enum StringFunctionEnum {
+  MAXLENGTH = 'maxLength',
+  MINLENGTH = 'minLength',
+  EMAIL = 'email',
+  URL = 'url',
+  UUID = 'uuid',
+  DATE = 'date',
+  DATETIME = 'datetime',
+  DATETIME_OFFSET = 'datetime_offset',
+  DATETIME_PRECISION = 'datetime_precision',
+  TRIM = 'trim',
+  LOWERCASE = 'lowercase',
+  UPPERCASE = 'uppercase',
+  MATCHES = 'matches'
 }

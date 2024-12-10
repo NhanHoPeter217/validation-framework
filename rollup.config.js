@@ -33,7 +33,7 @@ export default [
     ]
   },
   {
-    input: 'dist/index.d.ts', // Generated declaration entry point
+    input: 'src/index.d.ts', // Generated declaration entry point
     output: {
       file: 'dist/index.d.ts', // Final output location for .d.ts
       format: 'es'
