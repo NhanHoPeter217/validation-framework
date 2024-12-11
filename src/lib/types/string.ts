@@ -29,7 +29,7 @@ const rIsoDate = new RegExp(yearMonthDayISO);
 const rDayMonthYear = new RegExp(dayMonthYear);
 const rIsoDateTime = new RegExp(`${yearMonthDayISO}T${hourMinuteSecond}(\\.\\d+)?${zOrOffset}$`);
 
-class StringSchema<T extends string> extends Schema<T> {
+export class StringSchema extends Schema<string> {
   constructor() {
     super({
       type: 'string',
@@ -56,8 +56,8 @@ class StringSchema<T extends string> extends Schema<T> {
     return this.emptyPossibility(false, message);
   }
 
-  required(): this {
-    return super.required().nonEmpty();
+  required(message = 'The value must not be an empty string') {
+    return super.required(message).nonEmpty();
   }
 
   max(value: number, message: Message = `String length should not exceed ${value}`): this {

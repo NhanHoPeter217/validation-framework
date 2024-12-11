@@ -17,7 +17,7 @@ export class ObjectSchema<T extends RawShape, TOutput = { [K in keyof T]: TypeOf
   constructor(shape: T) {
     super({
       type: 'object',
-      check: (value) => typeof value === 'object' && !Array.isArray(value)
+      check: (value) => typeof value === 'object'
     });
 
     this.spec.shape = shape;
@@ -34,13 +34,19 @@ export class ObjectSchema<T extends RawShape, TOutput = { [K in keyof T]: TypeOf
     return this.spec.shape;
   }
 
-  safeValidate(value: any): Error[] {
+  safeValidate(value: any = {}): Error[] {
     this.errors = super.safeValidate(value);
     const fieldErrors: Error[] = [];
 
     for (const [key, schema] of Object.entries(this.spec.shape)) {
       const fieldValue = value[key];
-      const fieldErrorsForKey = (schema as Schema<any>).safeValidate(fieldValue);
+      // parse to schema, not only validate
+      let instance = schema as Schema<unknown>;
+      if (!(schema instanceof Schema)) {
+        instance = new ObjectSchema(schema);
+      }
+
+      const fieldErrorsForKey = instance.safeValidate(fieldValue);
       if (fieldErrorsForKey.length > 0) {
         fieldErrorsForKey.forEach((error) => {
           fieldErrors.push({ ...error, path: [key] });
@@ -54,58 +60,55 @@ export class ObjectSchema<T extends RawShape, TOutput = { [K in keyof T]: TypeOf
         }
       }
 
-      // for (const test of this.tests) {
-      //   if (!test.test(value)) {
-      //     this.errors = { ...this.errors, [test.name]: [test.message] };
-      //   }
-      // }
-
       return this.errors;
     }
 
     return fieldErrors;
   }
 
-  extend(shape: RawShape): this {
-    return this.mutate((next) => {
-      next.spec.shape = { ...this.spec.shape, ...shape };
-      return next;
-    });
+  extend<K extends RawShape>(shape: K): ObjectSchema<T & K> {
+    const next = new ObjectSchema<T & K>({} as any);
+    next.spec.shape = { ...this.spec.shape, ...shape };
+    return next;
   }
 
-  merge<T extends AnyObjectSchema>(schema: T): this {
-    return this.extend(schema.spec.shape);
+  merge<K extends RawShape>(schema: ObjectSchema<K>): ObjectSchema<T & K> {
+    const next = new ObjectSchema<T & K>({} as any);
+    next.spec.shape = { ...this.spec.shape, ...schema.spec.shape };
+    return next;
   }
 
-  pick<Mask extends { [k in keyof T]?: true }>(
-    mask: Mask
-  ): ObjectSchema<Pick<T, Extract<keyof T, keyof Mask>>, TOutput> {
-    return this.mutate((next) => {
-      next.spec.shape = Object.keys(mask).reduce((acc, key) => {
-        if (key in this.spec.shape) {
-          acc[key] = this.spec.shape[key];
-        }
-        return acc;
-      }, {} as RawShape);
-      return next;
-    });
+  pick<Mask extends { [k in keyof T]?: true }>(mask: Mask): ObjectSchema<Pick<T, Extract<keyof T, keyof Mask>>> {
+    const next = new ObjectSchema<Pick<T, Extract<keyof T, keyof Mask>>>({} as any);
+    next.spec.shape = Object.keys(this.spec.shape).reduce((acc, key) => {
+      if (key in mask) {
+        acc[key] = this.spec.shape[key];
+      }
+      return acc;
+    }, {} as RawShape);
+
+    return next;
   }
 
-  omit<Mask extends { [k in keyof T]?: true }>(mask: Mask): ObjectSchema<Omit<T, keyof Mask>, TOutput> {
+  omit<Mask extends { [k in keyof T]?: true }>(mask: Mask): ObjectSchema<Omit<T, keyof Mask>> {
+    const next = new ObjectSchema<Omit<T, keyof Mask>>({} as any);
+    next.spec.shape = Object.keys(this.spec.shape).reduce((acc, key) => {
+      if (!(key in mask)) {
+        acc[key] = this.spec.shape[key];
+      }
+      return acc;
+    }, {} as RawShape);
+    return next;
+  }
+
+  partial<Mask extends { [k in keyof T]?: true }>(mask?: Mask): this {
     return this.mutate((next) => {
       next.spec.shape = Object.keys(this.spec.shape).reduce((acc, key) => {
-        if (!(key in mask)) {
-          acc[key] = this.spec.shape[key];
+        if (!mask || key in mask) {
+          acc[key] = this.spec.shape[key].optional();
         }
         return acc;
       }, {} as RawShape);
-      return next;
-    });
-  }
-
-  partial(): this {
-    return this.mutate((next) => {
-      next.spec.optional = true;
       return next;
     });
   }

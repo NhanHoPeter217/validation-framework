@@ -6,13 +6,13 @@ import { Schema } from './schema';
 const isDate = (obj: any): obj is Date => Object.prototype.toString.call(obj) === '[object Date]';
 
 const invalidDate = new Date('');
-export class DateSchema<T extends Date> extends Schema<T> {
+export class DateSchema extends Schema<Date> {
   static INVALID_DATE = invalidDate;
 
   constructor() {
     super({
       type: 'date',
-      check: (value: any): value is NonNullable<T> => isDate(value) && !isNaN(value.getTime())
+      check: (value: any): value is NonNullable<Date> => isDate(value) && !isNaN(value.getTime())
     });
   }
   errors: Error[] = [];

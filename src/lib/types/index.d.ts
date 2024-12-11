@@ -79,6 +79,31 @@ export declare class NumberSchema extends Schema<number> {
   multiplyOf(value: number, message?: string): this;
 }
 
+export declare class StringSchema extends Schema<string> {
+  constructor();
+  errors: ValidationError[];
+  nonEmpty(message?: string): this;
+  required(message?: string): this;
+  min(value: number, message?: string): this;
+  max(value: number, message?: string): this;
+  matches(regex: RegExp, opts: { message?: string }): this;
+  email(message?: string): this;
+  url(message?: string): this;
+  uuid(message?: string): this;
+  lowercase(message?: string): this;
+  uppercase(message?: string): this;
+  date(message?: string): this;
+  datetime(message?: string): this;
+  trim(message?: string): this;
+}
+
+export declare class DateSchema extends Schema<Date> {
+  constructor();
+  errors: ValidationError[];
+  min(date: unknown | Date, message?: string): this;
+  max(date: unknown | Date, message?: string): this;
+}
+
 export declare class ObjectSchema<T extends RawShape> extends Schema<T> {
   constructor(shape: Record<string, Schema<any>>);
   errors: ValidationError[];
@@ -95,9 +120,11 @@ export declare class ObjectSchema<T extends RawShape> extends Schema<T> {
 declare const boolean: (_params?: { required_error: string; invalid_type_error: string }) => BooleanSchema;
 declare const number: (_params?: { required_error: string; invalid_type_error: string }) => NumberSchema;
 declare const bigint: (_params?: { required_error: string; invalid_type_error: string }) => BigIntSchema;
+declare const string: (_params?: { required_error: string; invalid_type_error: string }) => StringSchema;
+declare const date: (_params?: { required_error: string; invalid_type_error: string }) => DateSchema;
 declare const object: <T extends RawShape>(
   shape: T,
   params?: { required_error: string; invalid_type_error: string }
 ) => ObjectSchema<T>;
 
-export { bigint, boolean, number, object };
+export { bigint, boolean, date, number, object, string };
