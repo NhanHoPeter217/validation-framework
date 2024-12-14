@@ -6,7 +6,7 @@ import { Schema } from './schema';
 const isDate = (obj: any): obj is Date => Object.prototype.toString.call(obj) === '[object Date]';
 
 const invalidDate = new Date('');
-export class DateSchema extends Schema<Date> {
+export class DateSchema extends Schema<Date | undefined> {
   static INVALID_DATE = invalidDate;
 
   constructor() {

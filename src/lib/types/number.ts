@@ -5,7 +5,7 @@ import { Schema } from './schema';
 
 const isNaN = (value: Maybe<number>) => value == null || value != +value;
 
-export class NumberSchema extends Schema<number> {
+export class NumberSchema extends Schema<number | undefined> {
   constructor() {
     super({
       type: 'number',

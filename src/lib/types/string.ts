@@ -1,9 +1,9 @@
 import { StringFunctionEnum } from '../enums';
 import { Error, Message } from '../errors/ValidationError';
-import { Maybe } from '../others';
+import { Maybe, MaybeNotNull } from '../others';
 import isAbsent from '../others/isAbsent';
 import { defaultStringLocale } from '../others/locale';
-import { Schema } from './schema';
+import { Schema, TypeOf } from './schema';
 
 const isString = (value: Maybe<string>) => typeof value === 'string';
 const isTrimmed = (value: Maybe<string>) => isAbsent(value) || value === value.trim();
@@ -29,7 +29,7 @@ const rIsoDate = new RegExp(yearMonthDayISO);
 const rDayMonthYear = new RegExp(dayMonthYear);
 const rIsoDateTime = new RegExp(`${yearMonthDayISO}T${hourMinuteSecond}(\\.\\d+)?${zOrOffset}$`);
 
-export class StringSchema extends Schema<string> {
+export class StringSchema extends Schema<string | undefined> {
   constructor() {
     super({
       type: 'string',
@@ -52,12 +52,12 @@ export class StringSchema extends Schema<string> {
     });
   }
 
-  nonEmpty(message = 'The value must not be an empty string') {
+  nonEmpty(message = 'The value must not be an empty string'): this {
     return this.emptyPossibility(false, message);
   }
 
-  required(message = 'The value must not be an empty string') {
-    return super.required(message).nonEmpty();
+  required(message = 'The value must not be an empty string'): Schema<string> {
+    return this.nonEmpty().required(message);
   }
 
   max(value: number, message: Message = `String length should not exceed ${value}`): this {

@@ -2,7 +2,7 @@ import { BooleanFunctionEnum } from '../enums';
 import { Error, Message } from '../errors/ValidationError';
 import { Schema } from './schema';
 
-export class BooleanSchema extends Schema<boolean> {
+export class BooleanSchema extends Schema<boolean | undefined> {
   constructor() {
     super({
       type: 'boolean',

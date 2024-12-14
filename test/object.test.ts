@@ -6,10 +6,21 @@ describe('ObjectSchema', () => {
     age: v.number(),
     isStudent: v.boolean(),
     address: v.object({
-      city: v.number(),
-      street: v.string()
+      city: v.number().required().nullable(),
+      street: v.string().required()
     })
   });
+
+  type type = v.infer<typeof schema>;
+  const value: type = {
+    name: undefined,
+    age: 25,
+    isStudent: true,
+    address: {
+      city: undefined,
+      street: '123 Elm St'
+    }
+  };
   const schema2 = v.object({
     // information: schema,
     hello: {

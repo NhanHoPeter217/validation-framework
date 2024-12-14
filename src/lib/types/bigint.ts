@@ -2,7 +2,7 @@ import { BigIntFunctionEnum } from '../enums';
 import { Error, Message } from '../errors/ValidationError';
 import { Schema } from './schema';
 
-export class BigIntSchema extends Schema<bigint> {
+export class BigIntSchema extends Schema<bigint | undefined> {
   constructor() {
     super({
       type: 'bigint',

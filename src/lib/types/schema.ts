@@ -5,7 +5,6 @@ export type RawShape = Record<string, any>;
 // export type FieldsErrors<T> = {
 //   [K in keyof T]?: T[K] extends RawShape ? FieldsErrors<T[K]> : ValidationError[];
 // };
-
 export type TypeOf<T extends Schema<any>> = T['_output'];
 export type { TypeOf as infer };
 
@@ -101,19 +100,20 @@ export abstract class Schema<TInput, TOutput = TInput> {
     });
   }
 
-  optional(): this {
+  optional(): Schema<TInput | undefined, TOutput | undefined> {
     return this.optionality(true);
   }
 
-  nullable(): this {
+  nullable(): Schema<TInput | null, TOutput | null> {
     return this.nullability(true);
   }
-  nonNullable(message: Message = 'The value must not be null'): this {
-    return this.nullability(false, message);
+
+  nonNullable(message: Message = 'The value must not be null'): Schema<NonNullable<TInput>, NonNullable<TOutput>> {
+    return this.nullability(false, message) as Schema<NonNullable<TInput>, NonNullable<TOutput>>;
   }
 
-  required(message: Message = 'Required'): this {
-    return this.nonNullable().optionality(false, message);
+  required(message: Message = 'Required'): Schema<NonNullable<TInput>, NonNullable<TOutput>> {
+    return this.nonNullable().optionality(false, message) as Schema<NonNullable<TInput>, NonNullable<TOutput>>;
   }
 
   // nonRequired(): this {
