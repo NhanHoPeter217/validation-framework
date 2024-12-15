@@ -10,4 +10,4 @@ export interface ValidationRule<T> {
 
 export type FieldValidation<T> = ValidationRule<T>[];
 export type FieldValues = Record<string, any>;
-export type FieldErrors<TFieldValues> = Partial<Record<keyof TFieldValues, string>>;
+export type FieldErrors<TFieldValues> = Partial<Record<keyof TFieldValues, string[]>>;

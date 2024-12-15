@@ -1,26 +1,21 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
+import { Schema } from '../lib/types/schema';
 import { FieldErrors, FieldValues } from '../utils/types';
-
-interface ValidationOptions {
-  required?: boolean | string;
-  min?: number | string;
-  max?: number | string;
-  minLength?: number | string;
-  maxLength?: number | string;
-  pattern?: RegExp | string;
-  validate?: (value: any) => boolean | string;
-}
+import { ErrorSubscriberType } from './error-publishing';
+import { ErrorPublisher } from './error-publishing/error-publisher';
 
 interface UseFormProps<TFieldValues extends FieldValues = FieldValues> {
   defaultValues?: TFieldValues;
-  resolver?: (values: TFieldValues) => Promise<{ values: TFieldValues; errors: FieldErrors<TFieldValues> }>;
+  schema?: Record<string, Schema<TFieldValues>>;
+  errorDisplays?: ErrorSubscriberType[];
 }
 
 interface UseFormReturn<TFieldValues extends FieldValues = FieldValues> {
   register: (
     name: keyof TFieldValues,
-    options?: ValidationOptions
+    // options?: ValidationOptions
+    option?: Schema<TFieldValues>
   ) => { name: string; onChange: (event: React.ChangeEvent<HTMLInputElement>) => void };
   handleSubmit: (callback: (data: TFieldValues) => void) => (event: React.FormEvent) => void;
   formState: {
@@ -32,12 +27,14 @@ export function useForm<TFieldValues extends FieldValues = FieldValues>(
   props: UseFormProps<TFieldValues> = {}
 ): UseFormReturn<TFieldValues> {
   const [errors, setErrors] = useState<FieldErrors<TFieldValues>>({});
+  const errorPublisher = useRef(new ErrorPublisher<TFieldValues>(props.errorDisplays ?? []));
   const formValues = useRef<TFieldValues>(props.defaultValues ?? ({} as TFieldValues));
-  const validationRules = useRef<Record<keyof TFieldValues, ValidationOptions>>(
-    {} as Record<keyof TFieldValues, ValidationOptions>
+
+  const validationRules = useRef<Record<keyof TFieldValues, Schema<TFieldValues> | undefined>>(
+    {} as Record<keyof TFieldValues, Schema<TFieldValues>>
   );
 
-  const register = (name: keyof TFieldValues, options: ValidationOptions = {}) => {
+  const register = (name: keyof TFieldValues, options?: Schema<TFieldValues>) => {
     validationRules.current[name] = options;
     return {
       name: name as string,
@@ -47,51 +44,26 @@ export function useForm<TFieldValues extends FieldValues = FieldValues>(
     };
   };
 
-  const validateField = (name: keyof TFieldValues, value: any): string | undefined => {
-    const rules = validationRules.current[name];
-    if (rules) {
-      if (rules.required && !value) {
-        return typeof rules.required === 'string' ? rules.required : 'This field is required';
-      }
-      if (rules.min !== undefined && value < rules.min) {
-        return `Minimum value is ${rules.min}`;
-      }
-      if (rules.max !== undefined && value > rules.max) {
-        return `Maximum value is ${rules.max}`;
-      }
-      if (rules.minLength !== undefined && value.length < rules.minLength) {
-        return `Minimum length is ${rules.minLength}`;
-      }
-      if (rules.maxLength !== undefined && value.length > rules.maxLength) {
-        return `Maximum length is ${rules.maxLength}`;
-      }
-      if (rules.pattern && !new RegExp(rules.pattern).test(value)) {
-        return `Invalid email format`;
-      }
-      if (rules.validate && !rules.validate(value)) {
-        return typeof rules.validate === 'string' ? rules.validate : 'Invalid value';
-      }
-    }
-  };
-
   const handleSubmit = (callback: (data: TFieldValues) => void) => {
     return async (event: React.FormEvent) => {
       event.preventDefault();
-      if (props.resolver) {
-        const { values, errors } = await props.resolver(formValues.current);
-        setErrors(errors);
-        if (Object.keys(errors).length === 0) {
-          callback(values);
-        }
+
+      if (props.schema) {
+        // TODO: Implement schema validation
       } else {
         const newErrors: FieldErrors<TFieldValues> = {};
         for (const key in formValues.current) {
-          const error = validateField(key as keyof TFieldValues, formValues.current[key]);
-          if (error) {
-            newErrors[key as keyof TFieldValues] = error;
+          if (!validationRules.current[key]) {
+            continue;
+          }
+          const errors = validationRules.current[key]?.safeValidate(formValues.current[key]);
+          if (errors.length > 0) {
+            newErrors[key as keyof TFieldValues] = errors;
           }
         }
+
         setErrors(newErrors);
+        errorPublisher.current.notifySubcribers(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
           callback(formValues.current);

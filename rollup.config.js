@@ -3,6 +3,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import postcss from 'rollup-plugin-postcss';
 import dts from 'rollup-plugin-dts';
 
 export default [
@@ -12,15 +13,19 @@ export default [
       {
         file: 'dist/bundle.cjs', // Output for CommonJS
         format: 'cjs',
-        sourcemap: true // Include sourcemaps
+        sourcemap: false // Include sourcemaps
       },
       {
         file: 'dist/bundle.esm.js', // Output for ES Modules
         format: 'esm',
-        sourcemap: true
+        sourcemap: false
       }
     ],
     plugins: [
+      postcss({
+        extract: true,
+        plugins: []
+      }),
       resolve(), // Resolves `node_modules`
       commonjs(), // Converts CommonJS modules to ES modules
       json(), // Supports importing JSON files

@@ -9,7 +9,7 @@ export default tseslint.config(
   eslint.configs.recommended,
   tseslint.configs.stylisticTypeChecked,
   {
-    ignores: ['dist/**/*.ts', 'dist/**', '**/*.mjs', 'eslint.config.mjs', '**/*.js'],
+    ignores: ['dist/**', '**/*.mjs', '**/*.js'],
     plugins: {
       'simple-import-sort': eslintPluginSimpleImportSort,
       'unused-imports': unusedImports
