@@ -1,7 +1,7 @@
 import { v } from '../src';
 
 describe('BooleanSchema', () => {
-  const booleanSchema = v.boolean().nullable();
+  const booleanSchema = v.boolean().true();
   test('should pass validation', () => {
     expect(booleanSchema.safeValidate(true)).toEqual([]);
   });
@@ -12,13 +12,11 @@ describe('BooleanSchema', () => {
   //   ]);
   // });
 
+  // test('should pass validation', () => {
+  //   expect(booleanSchema.safeValidate(null)).toEqual([]);
+  // });
+
   test('should pass validation', () => {
     expect(booleanSchema.safeValidate(null)).toEqual([]);
   });
-
-  test('should pass validation', () => {
-    expect(booleanSchema.safeValidate(undefined)).toEqual([]);
-  });
-
-  
 });

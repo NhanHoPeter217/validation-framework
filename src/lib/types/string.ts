@@ -1,9 +1,9 @@
 import { StringFunctionEnum } from '../enums';
 import { Error, Message } from '../errors/ValidationError';
-import { Maybe, MaybeNotNull } from '../others';
+import { Maybe } from '../others';
 import isAbsent from '../others/isAbsent';
 import { defaultStringLocale } from '../others/locale';
-import { Schema, TypeOf } from './schema';
+import { Schema } from './schema';
 
 const isString = (value: Maybe<string>) => typeof value === 'string';
 const isTrimmed = (value: Maybe<string>) => isAbsent(value) || value === value.trim();
@@ -56,8 +56,8 @@ export class StringSchema extends Schema<string | undefined> {
     return this.emptyPossibility(false, message);
   }
 
-  required(message = 'The value must not be an empty string'): Schema<string> {
-    return this.nonEmpty().required(message);
+  required(message = 'The value must not be an empty string'): this {
+    return (super.required() as StringSchema).nonEmpty(message) as this;
   }
 
   max(value: number, message: Message = `String length should not exceed ${value}`): this {
@@ -84,13 +84,20 @@ export class StringSchema extends Schema<string | undefined> {
     });
   }
 
-  matches(regex: RegExp, opts: MatchOptions): this {
+  matches(regex: RegExp, opts?: MatchOptions | MatchOptions['message']): this {
     let name: string;
     let message: string;
     let includeEmptyString: boolean;
 
     if (opts && typeof opts === 'object') {
-      ({ name = 'matches', message, includeEmptyString = false } = opts as MatchOptions);
+      if (typeof opts === 'object') {
+        ({ name = 'matches', message, includeEmptyString = false } = opts as MatchOptions);
+      }
+      else {
+        message = opts;
+        name = 'matches';
+        includeEmptyString = false;
+      }
     }
 
     return this.mutate((next) => {

@@ -2,9 +2,6 @@ import { Error, Message } from '../errors/ValidationError';
 import { InternalTest, Test } from '../others/createValidation';
 export type RawShape = Record<string, any>;
 
-// export type FieldsErrors<T> = {
-//   [K in keyof T]?: T[K] extends RawShape ? FieldsErrors<T[K]> : ValidationError[];
-// };
 export type TypeOf<T extends Schema<any>> = T['_output'];
 export type { TypeOf as infer };
 
@@ -100,25 +97,20 @@ export abstract class Schema<TInput, TOutput = TInput> {
     });
   }
 
-  optional(): Schema<TInput | undefined, TOutput | undefined> {
+  optional(): this {
     return this.optionality(true);
   }
 
-  nullable(): Schema<TInput | null, TOutput | null> {
+  nullable(): this {
     return this.nullability(true);
   }
-
-  nonNullable(message: Message = 'The value must not be null'): Schema<NonNullable<TInput>, NonNullable<TOutput>> {
-    return this.nullability(false, message) as Schema<NonNullable<TInput>, NonNullable<TOutput>>;
+  nonNullable(message: Message = 'The value must not be null'): this {
+    return this.nullability(false, message);
   }
 
-  required(message: Message = 'Required'): Schema<NonNullable<TInput>, NonNullable<TOutput>> {
-    return this.nonNullable().optionality(false, message) as Schema<NonNullable<TInput>, NonNullable<TOutput>>;
+  required(message: Message = 'Required'): this {
+    return this.nonNullable().optionality(false, message);
   }
-
-  // nonRequired(): this {
-  //   return this.nullable().optional();
-  // }
 
   // Add a test to the `tests` array
   addTest(opts: Test): this {
@@ -158,29 +150,6 @@ export abstract class Schema<TInput, TOutput = TInput> {
 
     return this.typeCheck(v);
   }
-
-  // safeValidate(value: any): FieldsErrors<any> {
-  //   this.errors = {};
-  //   for (const test of Object.values(this.internalTests)) {
-  //     if (test && !test.test(value)) {
-  //       this.errors = { ...this.errors, [test.name]: [test.message] };
-  //     }
-  //   }
-
-  //   if (!this.isType(value)) {
-  //     this.errors = { ...this.errors, type: [`The value must be of type ${this.type}`] };
-  //   }
-
-  //   if (value == null) return this.errors;
-
-  //   for (const test of this.tests) {
-  //     if (!test.test(value)) {
-  //       this.errors = { ...this.errors, [test.name]: [test.message] };
-  //     }
-  //   }
-
-  //   return this.errors;
-  // }
 
   safeValidate(value: any): Error[] {
     this.errors = [];
