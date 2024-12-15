@@ -1,6 +1,6 @@
 import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from '@radix-ui/react-toast';
 
-import { ToastSubscriber } from '../hooks/error-publishing/toast-subcriber';
+import { ToastSubscriber } from '../hooks/error-publishing';
 import styles from './toaster.module.css' with { type: 'css' };
 
 export function Toaster() {

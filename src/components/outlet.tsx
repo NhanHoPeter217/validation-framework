@@ -1,4 +1,4 @@
-import { OutletSubscriber } from '../hooks/error-publishing/outlet-subcriber';
+import { OutletSubscriber } from '../hooks/error-publishing';
 import styles from './outlet.module.css'; // Import CSS Module
 
 export function ErrorOutlet() {

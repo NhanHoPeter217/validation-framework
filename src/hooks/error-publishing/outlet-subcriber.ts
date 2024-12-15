@@ -9,7 +9,7 @@ class OutletSubscriber extends ErrorSubscriber {
 
   static override readonly subscriberType = 'outlet' as const;
 
-  static override getInstance(): OutletSubscriber {
+  static getInstance(): OutletSubscriber {
     if (!OutletSubscriber._instance) {
       OutletSubscriber._instance = new OutletSubscriber();
     }
