@@ -1,29 +1,23 @@
-import { ValidationError } from '../errors';
+import { DateFunctionEnum } from '../enums';
+import { Error } from '../errors/ValidationError';
 import { defaultDateLocale } from '../others/locale';
 import { Schema } from './schema';
 
 const isDate = (obj: any): obj is Date => Object.prototype.toString.call(obj) === '[object Date]';
 
 const invalidDate = new Date('');
-
-enum DateFunctionEnum {
-  MIN = 'min',
-  MAX = 'max',
-  SAFE_VALIDATE = 'safeValidate'
-}
-
-class DateSchema<T extends Date> extends Schema<T> {
+export class DateSchema extends Schema<Date | undefined> {
   static INVALID_DATE = invalidDate;
 
   constructor() {
     super({
       type: 'date',
-      check: (value: any): value is NonNullable<T> => isDate(value) && !isNaN(value.getTime())
+      check: (value: any): value is NonNullable<Date> => isDate(value) && !isNaN(value.getTime())
     });
   }
-  errors = [];
+  errors: Error[] = [];
 
-  safeValidate(value: any): ValidationError[] {
+  safeValidate(value: any): Error[] {
     return typeof value === 'string' || typeof value === 'number'
       ? super.safeValidate(this.prepareParam(value, DateFunctionEnum.SAFE_VALIDATE))
       : super.safeValidate(value);
@@ -43,31 +37,32 @@ class DateSchema<T extends Date> extends Schema<T> {
       param = ref as Date;
     }
 
-    console.log(param);
     return param;
   }
 
-  min(date: unknown | Date, message = defaultDateLocale.min): DateSchema<T> {
+  min(date: unknown | Date, message = defaultDateLocale.min): this {
     const minDate = this.prepareParam(date, DateFunctionEnum.MIN);
-
-    return this.addTest({
-      name: DateFunctionEnum.MIN,
-      message,
-      params: { date },
-      exclusive: true,
-      test: (value) => value >= minDate
+    return this.mutate((next) => {
+      return next.addTest({
+        name: DateFunctionEnum.MIN,
+        message,
+        params: { date },
+        exclusive: true,
+        test: (value) => value >= minDate
+      });
     });
   }
 
-  max(date: unknown | Date, message = defaultDateLocale.max): DateSchema<T> {
+  max(date: unknown | Date, message = defaultDateLocale.max): this {
     const maxDate = this.prepareParam(date, DateFunctionEnum.MAX);
-
-    return this.addTest({
-      name: DateFunctionEnum.MAX,
-      message,
-      params: { date },
-      exclusive: true,
-      test: (value) => value <= maxDate
+    return this.mutate((next) => {
+      return next.addTest({
+        name: DateFunctionEnum.MAX,
+        message,
+        params: { date },
+        exclusive: true,
+        test: (value) => value <= maxDate
+      });
     });
   }
 }
