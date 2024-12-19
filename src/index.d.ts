@@ -1,2 +1,2 @@
+export * from './hooks';
 export * from './lib';
-export as namespace Schema;

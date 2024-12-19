@@ -1,12 +1,18 @@
-import { Message, ValidationError } from '../errors/ValidationError';
+import { Error, Message } from '../errors/ValidationError';
 import { InternalTest, Test } from '../others/createValidation';
+export type RawShape = Record<string, any>;
+
+export type TypeOf<T extends Schema<any>> = T['_output'];
+export type { TypeOf as infer };
 
 export interface SchemaSpec {
   nullable: boolean;
   optional: boolean;
 }
 
-export abstract class Schema<T> {
+export abstract class Schema<TInput, TOutput = TInput> {
+  readonly _type!: TInput;
+  readonly _output!: TOutput;
   /**
    * Store the tests of child Schemas or user-defined tests
    */
@@ -21,8 +27,9 @@ export abstract class Schema<T> {
 
   protected typeCheck: (value: any) => boolean;
   protected type: string;
+  private mutable = false;
 
-  abstract errors: ValidationError[];
+  abstract errors: Error[];
 
   protected spec: SchemaSpec;
 
@@ -37,59 +44,72 @@ export abstract class Schema<T> {
   }
 
   clone(): this {
-    const next = Object.create(this) as this;
-    return Object.assign(next, this);
+    const deepClonedInstance = Object.create(this) as this;
+
+    deepClonedInstance.tests = [...this.tests];
+    deepClonedInstance.exclusiveTests = { ...this.exclusiveTests };
+    deepClonedInstance.internalTests = { ...this.internalTests };
+    deepClonedInstance.spec = { ...this.spec };
+
+    return deepClonedInstance;
+  }
+
+  protected mutate(callback: (self: this) => this): this {
+    if (this.mutable) return callback(this);
+
+    const next = this.clone();
+    next.mutable = true;
+
+    try {
+      return callback(next);
+    } finally {
+      next.mutable = false;
+    }
   }
 
   protected nullability(nullable: boolean, message: Message = 'Nullability test failed') {
-    const next = this.clone();
+    return this.mutate((next) => {
+      next.spec.nullable = nullable;
 
-    next.spec.nullable = nullable;
-
-    next.internalTests.nullable = {
-      message: message,
-      name: 'nullable',
-      test(value) {
-        return value === null ? next.spec.nullable : true;
-      }
-    };
-    return next;
+      next.internalTests.nullable = {
+        message: message,
+        name: 'nullable',
+        test(value) {
+          return value === null ? next.spec.nullable : true;
+        }
+      };
+      return next;
+    });
   }
 
   protected optionality(optional: boolean, message: Message = 'Optionality test failed') {
-    const next = this.clone();
+    return this.mutate((next) => {
+      next.spec.optional = optional;
 
-    next.spec.optional = optional;
-
-    next.internalTests.optionality = {
-      message: message,
-      name: 'optionality',
-      test(value) {
-        return value === undefined ? next.spec.optional : true;
-      }
-    };
-    return next;
+      next.internalTests.optionality = {
+        message: message,
+        name: 'optionality',
+        test(value) {
+          return value === undefined ? next.spec.optional : true;
+        }
+      };
+      return next;
+    });
   }
 
   optional(): this {
     return this.optionality(true);
   }
-  defined(message = 'The value must be defined'): this {
-    return this.optionality(false, message);
-  }
 
   nullable(): this {
     return this.nullability(true);
   }
-  nonNullable(message = 'The value must not be null'): this {
+  nonNullable(message: Message = 'The value must not be null'): this {
     return this.nullability(false, message);
   }
 
-  required(): this {
-    return this.nonNullable().defined();
-  }
-  nonRequired(): this {
-    return this.optional().nullable();
+  required(message: Message = 'Required'): this {
+    return this.nonNullable().optionality(false, message);
   }
 
   // Add a test to the `tests` array
@@ -131,23 +151,23 @@ export abstract class Schema<T> {
     return this.typeCheck(v);
   }
 
-  safeValidate(value: any): ValidationError[] {
+  safeValidate(value: any): Error[] {
     this.errors = [];
     for (const test of Object.values(this.internalTests)) {
       if (test && !test.test(value)) {
-        this.errors.push(test.message);
+        this.errors.push({ code: test.name, message: test.message });
       }
     }
 
     if (!this.isType(value)) {
-      this.errors.push(`The value must be of type ${this.type}`);
+      this.errors.push({ code: 'invalid_type', message: `Expected ${this.type}, but received ${typeof value}` });
     }
 
     if (value == null) return this.errors;
 
     for (const test of this.tests) {
       if (!test.test(value)) {
-        this.errors.push(test.message);
+        this.errors.push({ code: test.name, message: test.message });
       }
     }
 

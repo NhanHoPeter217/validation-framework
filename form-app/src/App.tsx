@@ -1,9 +1,17 @@
-import { Input, v } from 'validation-framework';
+import { Toaster } from 'validation-framework';
+
+import Form from './Form';
+import 'validation-framework/dist/bundle.css';
 
 function App() {
-  const schema = v.number().lte(10);
-  // return <div>Hello wworld</div>;
-  return <Input validator={schema} type="number" onChange={(value) => console.log(value)} />;
+  return (
+    <main className="h-screen w-screen flex flex-col items-center justify-center">
+      <div>
+        <Form />
+      </div>
+      <Toaster />
+    </main>
+  );
 }
 
 export default App;
