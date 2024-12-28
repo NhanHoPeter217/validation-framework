@@ -20,7 +20,7 @@ class OutletSubscriber extends ErrorSubscriber {
     super();
   }
 
-  private setErrorsState;
+  private setErrorsState?: (errors: FieldErrors<FieldValues>) => void;
 
   useOutlet() {
     const [errors, setErrors] = useState<FieldErrors<FieldValues>>({});
@@ -31,8 +31,7 @@ class OutletSubscriber extends ErrorSubscriber {
   setErrors(errors: Partial<Record<string, string[]>>): void {
     if (!this.setErrorsState) {
       console.error('ErrorSubcriber: setErrorsState is not defined, please use ErrorOutlet component');
-    }
-    this.setErrorsState(errors);
+    } else this.setErrorsState(errors);
   }
 }
 

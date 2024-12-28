@@ -6,7 +6,6 @@ import { ToastSubscriber } from './toast-subcriber';
 
 class ErrorPublisher<TFieldValues extends FieldValues = FieldValues> {
   subcribers: ErrorSubscriber[] = [];
-  notify: (errors: FieldErrors<TFieldValues>) => void;
 
   constructor(names: ErrorSubscriberType[]) {
     this.subcribers = this.getSubcribers(names);
@@ -23,6 +22,10 @@ class ErrorPublisher<TFieldValues extends FieldValues = FieldValues> {
 
   notifySubcribers(errors: FieldErrors<TFieldValues>) {
     this.subcribers.forEach((subcriber) => subcriber.setErrors(errors));
+  }
+
+  clearErrors() {
+    this.subcribers.forEach((subcriber) => subcriber.setErrors({}));
   }
 }
 

@@ -6,7 +6,7 @@ export function ErrorOutlet() {
   const { errors } = outletSubscriber.useOutlet();
 
   if (!errors || Object.keys(errors).length === 0) {
-    return <div></div>;
+    return <></>;
   }
 
   return (

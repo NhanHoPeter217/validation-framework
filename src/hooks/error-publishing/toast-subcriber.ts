@@ -206,6 +206,10 @@ class ToastSubscriber extends ErrorSubscriber {
   }
 
   setErrors(errors: FieldErrors<FieldValues>): void {
+    if (Object.keys(errors).length === 0) {
+      this.dispatch({ type: 'REMOVE_TOAST' });
+      return;
+    }
     this.toast({
       title: 'Form submission failed',
       description: createElement(ErrorList, { errors })

@@ -14,20 +14,13 @@ export class ObjectSchema<T extends RawShape, TOutput = { [K in keyof T]: TypeOf
   errors: Error[] = [];
 
   protected spec: ObjectSchemaSpec = { shape: {}, nullable: false, optional: false };
-  constructor(shape: T) {
+  constructor(shape: { [K in keyof T]: Schema<any> }) {
     super({
       type: 'object',
       check: (value) => typeof value === 'object'
     });
 
     this.spec.shape = shape;
-  }
-
-  get output() {
-    type Output = {
-      [K in keyof T]: T[K] extends Schema<infer U> ? U : never;
-    };
-    return {} as Output;
   }
 
   get shape() {

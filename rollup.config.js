@@ -4,7 +4,6 @@ import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
-import dts from 'rollup-plugin-dts';
 
 export default [
   {
@@ -36,13 +35,5 @@ export default [
         tsconfig: './tsconfig.json' // Specify your TypeScript configuration file
       })
     ]
-  },
-  {
-    input: 'src/index.d.ts', // Generated declaration entry point
-    output: {
-      file: 'dist/index.d.ts', // Final output location for .d.ts
-      format: 'es'
-    },
-    plugins: [dts()]
   }
 ];
