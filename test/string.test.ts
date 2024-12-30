@@ -1,9 +1,9 @@
-// import { v } from '../src';
+import { v } from '../src';
 
-// describe('StringSchema', () => {
-//   const StringSchema = v.string().required().matches(/^[1-9]+$/);
+describe('StringSchema', () => {
+  const StringSchema = v.string().required();
   
-//   test('should pass validation', () => {
-//     expect(StringSchema.safeValidate('1234560789')).toEqual([]);
-//   });
-// });
+  test('should pass validation', () => {
+    expect(StringSchema.safeValidate(undefined)).toEqual([]);
+  });
+});

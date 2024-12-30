@@ -17,6 +17,20 @@ export class NumberSchema extends Schema<number | undefined> {
 
   errors: Error[] = [];
 
+  private prepareParam(ref: unknown): number {
+    const cast = parseFloat(ref as string);
+
+    if (isNaN(cast)) {
+      throw new TypeError('Invalid number');
+    }
+
+    return cast;
+  }
+
+  safeValidate(value: any): Error[] {
+    return typeof value === 'string' ? super.safeValidate(this.prepareParam(value)) : super.safeValidate(value);
+  }
+
   zero(message: Message = 'Value should be 0'): this {
     return this.mutate((next) => {
       return next.addTest({

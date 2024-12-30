@@ -5,11 +5,7 @@ describe('DateSchema', () => {
 
     // const StringSchema2 = StringSchema.required();
 
-    // test ('should pass validation', () => {
-    //     expect(dateSchema.safeValidate(1544850799000)).toEqual([]);
-    // });
+    test ('should pass validation', () => {
+        expect(dateSchema.safeValidate("2017-01-01")).toEqual([]);
+    });
 });
-
-// let dateSchema = v.date().min(new Date('2018-01-01')).max(new Date('2018-12-31')).optional();
-
-// console.log(dateSchema.safeValidate('false'));

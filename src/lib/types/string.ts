@@ -92,8 +92,7 @@ export class StringSchema extends Schema<string | undefined> {
     if (opts && typeof opts === 'object') {
       if (typeof opts === 'object') {
         ({ name = 'matches', message, includeEmptyString = false } = opts as MatchOptions);
-      }
-      else {
+      } else {
         message = opts;
         name = 'matches';
         includeEmptyString = false;
