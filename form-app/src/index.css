@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* --- General Form Styles --- */
+  form {
+    @apply w-full; /* Adjust width as needed */
+  }
+
+  label {
+    @apply block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300;
+  }
+
+  /* --- Input & Textarea --- */
+  input,
+  textarea {
+    @apply w-full px-3 py-2 mb-4 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-gray-700 dark:text-gray-300 dark:bg-gray-800; /* Added border */
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400;
+    @apply placeholder-gray-400;
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  /* --- Select --- */
+  select {
+    @apply w-full px-3 py-2 mb-4 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-gray-700 dark:text-gray-300 dark:bg-gray-800; /* Added border */
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400;
+    @apply appearance-none; /* Remove default OS styling */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23a0aec0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); /* Custom dropdown arrow */
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    background-size: 1.5em 1.5em;
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  /* --- Checkbox & Radio --- */
+  input[type='checkbox'],
+  input[type='radio'] {
+    @apply mr-2 h-4 w-4 cursor-pointer border-gray-300 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400;
+    @apply appearance-none;
+  }
+
+  input[type='checkbox']:checked {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z'/%3e%3c/svg%3e");
+    @apply bg-blue-600 border-blue-600 dark:bg-blue-500 dark:border-blue-500;
+  }
+
+  input[type='radio']:checked {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+    @apply bg-blue-600 border-blue-600 dark:bg-blue-500 dark:border-blue-500;
+  }
+
+  /* --- File Input --- */
+  input[type='file'] {
+    @apply mb-4;
+  }
+
+  input[type='file']::file-selector-button {
+    @apply font-semibold px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300; /* Added border */
+    margin-right: 1rem;
+  }
+
+  /* --- Submit Button --- */
+  button[type='submit'] {
+    @apply px-6 py-3 rounded-lg font-medium text-white transition-colors duration-200 ease-in-out mb-3;
+    @apply bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-blue-400 dark:focus:ring-offset-gray-800;
+  }
+
+  /* --- Disabled State --- */
+  :disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  /* --- Error State --- */
+  .error {
+    @apply border-red-500 dark:border-red-400;
+  }
+
+  .error-message {
+    @apply text-red-500 text-sm mt-1;
+  }
+}

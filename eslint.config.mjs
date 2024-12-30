@@ -9,7 +9,7 @@ export default tseslint.config(
   eslint.configs.recommended,
   tseslint.configs.stylisticTypeChecked,
   {
-    ignores: ['dist/**/*.ts', 'dist/**', '**/*.mjs', 'eslint.config.mjs', '**/*.js'],
+    ignores: ['dist/**', '**/*.mjs', '**/*.js'],
     plugins: {
       'simple-import-sort': eslintPluginSimpleImportSort,
       'unused-imports': unusedImports
@@ -17,9 +17,10 @@ export default tseslint.config(
     rules: {
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-unused-vars': 'off',
+      'no-useless-escape': 'warn',
       'simple-import-sort/imports': 'warn',
       'simple-import-sort/exports': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
       'unused-imports/no-unused-imports': 'warn',
       'unused-imports/no-unused-vars': [
         'warn',

@@ -6,5 +6,4 @@ export default {
     '^.+.tsx?$': ['ts-jest', {}]
   },
   testMatch: ['**/*.test.ts'],
-  modulePathIgnorePatterns: ['<rootDir>/.yalc/'] // Ignore .yalc folder
 };

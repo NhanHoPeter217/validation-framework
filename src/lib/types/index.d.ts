@@ -10,6 +10,12 @@ export declare interface Test {
 export declare type InternalTest = Omit<Test, 'params' | 'exclusive'>;
 export declare type Message = string;
 export declare type ValidationError = string;
+export type RawShape = Record<string, any>;
+
+export declare type AnyObjectSchema = ObjectSchema<any>;
+export declare type FieldsErrors<T> = {
+  [K in keyof T]?: T[K] extends RawShape ? FieldsErrors<T[K]> : ValidationError[];
+};
 
 export declare interface SchemaSpec {
   nullable: boolean;
@@ -30,84 +36,95 @@ export abstract class Schema<T> {
   nonRequired(): Schema<T>;
   addTest(opts: Test): Schema<T>;
   isType(v: unknown): boolean;
-  safeValidate(value: any): ValidationError[];
+  safeValidate(value: any): ValidationError[] | FieldsErrors<any>;
 }
 
-export declare enum BooleanFunctionEnum {
-  TRUE = 'true',
-  FALSE = 'false'
-}
-
-export declare class BooleanSchema<T extends boolean> extends Schema<T> {
+export declare class BooleanSchema extends Schema<boolean> {
   constructor();
   errors: ValidationError[];
-  true(message?: Message): BooleanSchema<T>;
-  false(message?: Message): BooleanSchema<T>;
+  true(message?: Message): this;
+  false(message?: Message): this;
 }
 
-export declare enum BigIntFunctionEnum {
-  POSITIVE = 'positive',
-  NONPOSITIVE = 'nonpositive',
-  NEGATIVE = 'negative',
-  NONNEGATIVE = 'nonnegative',
-  GT = 'gt',
-  GTE = 'gte',
-  LT = 'lt',
-  LTE = 'lte',
-  MULTIPLYOF = 'multiplyOf'
-}
-
-export declare class BigIntSchema<T extends bigint> extends Schema<T> {
+export declare class BigIntSchema extends Schema<bigint> {
   constructor();
   errors: ValidationError[];
-  positive(message?: string): BigIntSchema<T>;
-  nonpositive(message?: string): BigIntSchema<T>;
-  negative(message?: string): BigIntSchema<T>;
-  nonnegative(message?: string): BigIntSchema<T>;
-  gt(value: number, message?: string): BigIntSchema<T>;
-  gte(value: number, message?: string): BigIntSchema<T>;
-  lt(value: number, message?: string): BigIntSchema<T>;
-  lte(value: number, message?: string): BigIntSchema<T>;
-  multiplyOf(value: number, message?: string): BigIntSchema<T>;
+  positive(message?: string): this;
+  nonpositive(message?: string): this;
+  negative(message?: string): this;
+  nonnegative(message?: string): this;
+  gt(value: number, message?: string): this;
+  gte(value: number, message?: string): this;
+  lt(value: number, message?: string): this;
+  lte(value: number, message?: string): this;
+  multiplyOf(value: number, message?: string): this;
 }
 
-export declare enum NumberFunctionEnum {
-  ZERO = 'zero',
-  POSITIVE = 'positive',
-  NONPOSITIVE = 'nonpositive',
-  NEGATIVE = 'negative',
-  NONNEGATIVE = 'nonnegative',
-  ODD = 'odd',
-  EVEN = 'even',
-  FINITE = 'finite',
-  GT = 'gt',
-  GTE = 'gte',
-  LT = 'lt',
-  LTE = 'lte',
-  INT = 'int',
-  MULTIPLYOF = 'multiplyOf'
-}
-
-export declare class NumberSchema<T extends number> extends Schema<T> {
+export declare class NumberSchema extends Schema<number> {
   constructor();
   errors: ValidationError[];
-  zero(message?: string): NumberSchema<T>;
-  positive(message?: string): NumberSchema<T>;
-  nonpositive(message?: string): NumberSchema<T>;
-  negative(message?: string): NumberSchema<T>;
-  nonnegative(message?: string): NumberSchema<T>;
-  odd(message?: string): NumberSchema<T>;
-  even(message?: string): NumberSchema<T>;
-  finite(message?: string): NumberSchema<T>;
-  gt(value: number, message?: string): NumberSchema<T>;
-  gte(value: number, message?: string): NumberSchema<T>;
-  lt(value: number, message?: string): NumberSchema<T>;
-  lte(value: number, message?: string): NumberSchema<T>;
-  int(message?: string): NumberSchema<T>;
-  multiplyOf(value: number, message?: string): NumberSchema<T>;
+  zero(message?: string): this;
+  positive(message?: string): this;
+  nonpositive(message?: string): this;
+  negative(message?: string): this;
+  nonnegative(message?: string): this;
+  odd(message?: string): this;
+  even(message?: string): this;
+  finite(message?: string): this;
+  gt(value: number, message?: string): this;
+  gte(value: number, message?: string): this;
+  lt(value: number, message?: string): this;
+  lte(value: number, message?: string): this;
+  int(message?: string): this;
+  multiplyOf(value: number, message?: string): this;
 }
-declare function boolean(params?: { required_error: string; invalid_type_error: string }): BooleanSchema<boolean>;
-declare function number(params?: { required_error: string; invalid_type_error: string }): NumberSchema<number>;
-declare function bigint(params?: { required_error: string; invalid_type_error: string }): BigIntSchema<bigint>;
 
-export { bigint,boolean, number };
+export declare class StringSchema extends Schema<string> {
+  constructor();
+  errors: ValidationError[];
+  nonEmpty(message?: string): this;
+  required(message?: string): this;
+  min(value: number, message?: string): this;
+  max(value: number, message?: string): this;
+  matches(regex: RegExp, opts: { message?: string }): this;
+  email(message?: string): this;
+  url(message?: string): this;
+  uuid(message?: string): this;
+  lowercase(message?: string): this;
+  uppercase(message?: string): this;
+  date(message?: string): this;
+  datetime(message?: string): this;
+  trim(message?: string): this;
+}
+
+export declare class DateSchema extends Schema<Date> {
+  constructor();
+  errors: ValidationError[];
+  min(date: unknown | Date, message?: string): this;
+  max(date: unknown | Date, message?: string): this;
+}
+
+export declare class ObjectSchema<T extends RawShape> extends Schema<T> {
+  constructor(shape: Record<string, Schema<any>>);
+  errors: ValidationError[];
+  get shape(): T;
+  extend(shape: Record<string, Schema<any>>): this;
+  merge<T extends AnyObjectSchema>(schema: T): this;
+  pick<Mask extends { [k in keyof T]?: true }>(mask: Mask): ObjectSchema<Pick<T, Extract<keyof T, keyof Mask>>>;
+  omit<Mask extends { [k in keyof T]?: true }>(mask: Mask): ObjectSchema<Omit<T, keyof Mask>>;
+  partial(): this;
+  keyof(): this;
+  safeValidate(value: any): FieldsErrors<any> | ValidationError[];
+}
+
+declare const boolean: (_params?: { required_error: string; invalid_type_error: string }) => BooleanSchema;
+declare const number: (_params?: { required_error: string; invalid_type_error: string }) => NumberSchema;
+declare const bigint: (_params?: { required_error: string; invalid_type_error: string }) => BigIntSchema;
+declare const string: (_params?: { required_error: string; invalid_type_error: string }) => StringSchema;
+declare const date: (_params?: { required_error: string; invalid_type_error: string }) => DateSchema;
+declare const object: <T extends RawShape>(
+  shape: T,
+  params?: { required_error: string; invalid_type_error: string }
+) => ObjectSchema<T>;
+
+export { bigint, boolean, date, number, object, string };
