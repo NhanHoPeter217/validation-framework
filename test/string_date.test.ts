@@ -1,20 +1,22 @@
 import { v } from '../src';
 
-describe('NumberSchema', () => {
-  const numberSchema = v.number().gt(0).lt(10);
-  const stringg = v.string().max(10);
+describe('StringSchema', () => {
+  const StringSchema = v
+    .string()
+    .required()
+    .matches(/^[1-9]+$/);
   const date = v.date().min(625276800000).max('2021-12-30');
-  // test('should pass validation', () => {
-  //   expect(numberSchema.safeValidate(5)).toEqual([]);
-  // });
 
-  // test('should fail validation', () => {
-  //   expect(numberSchema.safeValidate(15)).toEqual([
-  //     {
-  //       message: 'Value must be less than 10'
-  //     }
-  //   ]);
-  // });
+  test('should pass validation', () => {
+    expect(StringSchema.safeValidate('1234560789')).toEqual([
+      {
+        code: 'matches',
+        message: 'String does not match the required pattern'
+      }
+    ]);
+  });
+
+  const stringg = v.string().max(10);
 
   test('should pass validation', () => {
     expect(stringg.safeValidate('1234567890')).toEqual([]);
